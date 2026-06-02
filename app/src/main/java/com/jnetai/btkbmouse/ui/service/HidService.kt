@@ -219,14 +219,6 @@ class HidService : Service() {
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
-        ) { val value = characteristic.value } {
-            // Parse HID report data
-            parseHidReport(value)
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic
         ) {
             characteristic.value?.let { parseHidReport(it) }
         }
