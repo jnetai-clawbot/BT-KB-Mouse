@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="neon_blue">#FF4FC3F7</color>
+    <color name="dark_background">#FF0D1117</color>
+    <color name="dark_surface">#FF161B22</color>
+    <color name="text_primary">#FFE6EDF3</color>
+    <color name="text_secondary">#FF8B949E</color>
+    <color name="success_green">#FF3FB950</color>
+    <color name="error_red">#FFF85149</color>
+</resources>

@@ -1,0 +1,49 @@
+# Project: BT KB & Mouse Pro
+# Bluetooth Keyboard & Mouse HID Emulation App
+# Built from decompiled HID driver + existing codebase
+# Repository: https://github.com/jnetai-clawbot/BT-KB-Mouse
+
+## Version 1.0.0 - Initial Pro Release
+
+### Architecture
+- Package: com.jnetaol.btkbmouse
+- Jetpack Compose UI with Material 3 dark theme
+- Room database for profiles, settings, presets, clipboard history, emulated devices
+- BluetoothHidDevice API for HID keyboard + mouse emulation via SDP
+- Consumer report descriptor for media key support
+
+### HID Features (from decompiled driver analysis)
+- Dual-mode HID: Classic Bluetooth SDP + BLE GATT profile UUIDs
+- Keyboard HID report descriptor with modifier keys + 6-key rollover
+- Mouse HID report descriptor with 3 buttons, X/Y movement, scroll wheel
+- Consumer/Media control report descriptor (play/pause, volume, tracks)
+- Auto-retry HID registration with exponential backoff (up to 10 attempts)
+- BluetoothHidDevice.Callback for app status, connection state, get/set reports, interrupt data
+- SDP record published with combo subclass, provider=jnetai.com
+
+### User Interface
+- Home screen with connection status, function cards, split view entry
+- Connection screen with paired/new device scanning, HID status, retry button
+- Touchpad screen with drag gestures, sensitivity/scroll sliders, left/right/middle click buttons
+- Keyboard screen with 3 input modes (Instant/Clipboard/Preset), delay sliders, phrase management
+- Split View screen with combined keyboard + touchpad layout
+- Settings screen with profiles (CRUD), emulated device toggles, mouse/keyboard/audio sliders
+- About screen with Made by jnetai.com, version, update checker, share button
+
+### Error Codes
+BK-000 to BK-203 persistent error/debug logging throughout
+
+### Keystore
+Same keystore.jks (alias=btkbmouse, password=changeit) for seamless updates
+
+### Changes from v1.0.0 (btkbmouse)
+- Renamed project to BT-KB-Mouse (BTKBMousePro)
+- Added consumer/media HID report descriptor for media key support
+- Added middle mouse button click support
+- Added scroll speed slider to touchpad/settings
+- Added scroll wheel to split view
+- Improved HID callback with onGetReport, onSetReport, onInterruptData
+- Changed update checker URL to point to BT-KB-Mouse repo
+- Added mouseScrollSpeed field to Profile model
+- Pro branding throughout UI
+- Better error messaging for HID registration
