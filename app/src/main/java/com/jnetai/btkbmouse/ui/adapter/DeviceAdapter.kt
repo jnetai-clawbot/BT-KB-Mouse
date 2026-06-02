@@ -77,13 +77,6 @@ class DeviceAdapter(
             if (device.batteryLevel != null) {
                 binding.tvBattery.visibility = View.VISIBLE
                 binding.tvBattery.text = "${device.batteryLevel}%"
-                val batteryColor = when {
-                    device.batteryLevel >= 60 -> R.color.batteryHigh
-                    device.batteryLevel >= 30 -> R.color.batteryMedium
-                    device.batteryLevel >= 15 -> R.color.batteryLow
-                    else -> R.color.batteryCritical
-                }
-                binding.tvBattery.setTextColor(binding.root.context.getColor(batteryColor))
             } else {
                 binding.tvBattery.visibility = View.GONE
             }

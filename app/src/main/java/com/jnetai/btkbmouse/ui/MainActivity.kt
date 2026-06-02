@@ -8,12 +8,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jnetai.btkbmouse.R
@@ -33,14 +37,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deviceAdapter: DeviceAdapter
     private lateinit var discoveredAdapter: DiscoveredDeviceAdapter
 
-    private var isScanning = false
+    private val _isDiscovering = MutableLiveData(false)
 
     private val bluetoothPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         val allGranted = permissions.all { it.value }
         if (allGranted) {
-            enableBluetooth()
+            startDiscovery()
         } else {
             Toast.makeText(this, R.string.bluetooth_permission_required, Toast.LENGTH_LONG).show()
         }
@@ -61,18 +65,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
         setupBluetooth()
         setupViewModel()
         setupRecyclerViews()
-        setupClickListeners()
         observeViewModel()
     }
 
     private fun setupBluetooth() {
         val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
-
-        updateBluetoothStatus()
     }
 
     private fun setupViewModel() {
@@ -81,18 +83,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerViews() {
         deviceAdapter = DeviceAdapter(
-            onDeviceClick = { device ->
-                showDeviceOptionsDialog(device)
-            },
-            onDeviceLongClick = { device ->
-                showDeviceOptionsDialog(device)
-            }
+            onDeviceClick = { device -> showDeviceOptionsDialog(device) },
+            onDeviceLongClick = { device -> showDeviceOptionsDialog(device) }
         )
 
         discoveredAdapter = DiscoveredDeviceAdapter(
-            onDeviceClick = { device ->
-                viewModel.pairDevice(device)
-            }
+            onDeviceClick = { device -> viewModel.pairDevice(device) }
         )
 
         binding.rvSavedDevices.apply {
@@ -106,88 +102,102 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupClickListeners() {
-        binding.fabScan.setOnClickListener {
-            if (viewModel.isBluetoothEnabled()) {
-                if (hasPermissions()) {
-                    toggleScan()
-                } else {
-                    requestPermissions()
-                }
-            } else {
-                enableBluetooth()
-            }
-        }
-
-        binding.btnSettings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }
-
-        binding.btnAbout.setOnClickListener {
-            startActivity(Intent(this, AboutActivity::class.java))
-        }
-    }
-
     private fun observeViewModel() {
         viewModel.savedDevices.observe(this) { devices ->
             deviceAdapter.submitList(devices)
-            binding.tvNoDevices.visibility = if (devices.isEmpty()) View.VISIBLE else View.GONE
+            binding.tvNoSavedDevices.visibility = if (devices.isEmpty()) View.VISIBLE else View.GONE
         }
 
         viewModel.discoveredDevices.observe(this) { devices ->
             discoveredAdapter.submitList(devices)
+            binding.tvNoDevicesFound.visibility = if (devices.isEmpty()) View.VISIBLE else View.GONE
         }
 
-        viewModel.isDiscovering.observe(this) { isDiscovering ->
-            isScanning = isDiscovering
-            updateScanButton()
-            binding.progressScanning.visibility = if (isDiscovering) View.VISIBLE else View.GONE
-        }
-
-        viewModel.connectionState.observe(this) { state ->
-            updateConnectionStatus(state)
+        _isDiscovering.observe(this) { isDiscovering ->
+            binding.progressScan.visibility = if (isDiscovering) View.VISIBLE else View.GONE
+            binding.tvScanning.visibility = if (isDiscovering) View.VISIBLE else View.GONE
+            invalidateOptionsMenu()
         }
     }
 
-    private fun toggleScan() {
-        if (isScanning) {
-            stopDiscovery()
-        } else {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_scan -> {
+                if (_isDiscovering.value == true) {
+                    stopDiscovery()
+                } else {
+                    requestPermissionsAndScan()
+                }
+                true
+            }
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            R.id.action_about -> {
+                startActivity(Intent(this, AboutActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun requestPermissionsAndScan() {
+        if (bluetoothAdapter?.isEnabled != true) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivity(enableBtIntent)
+            return
+        }
+
+        if (hasPermissions()) {
             startDiscovery()
+        } else {
+            requestPermissions()
+        }
+    }
+
+    private fun hasPermissions(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        } else {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            bluetoothPermissionLauncher.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
+        } else {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
     private fun startDiscovery() {
         _isDiscovering.value = true
-        val devices = mutableListOf<Device>()
-        discoveredAdapter.submitList(devices)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
-                doDiscovery()
-            } else {
-                bluetoothPermissionLauncher.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                doDiscovery()
-            } else {
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
-        }
-    }
-
-    private fun doDiscovery() {
         val filter = android.content.IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(discoveryReceiver, filter, RECEIVER_NOT_EXPORTED)
         } else {
             registerReceiver(discoveryReceiver, filter)
         }
-        bluetoothAdapter?.startDiscovery()
+
+        try {
+            bluetoothAdapter?.startDiscovery()
+        } catch (e: SecurityException) {
+            Toast.makeText(this, R.string.bluetooth_permission_required, Toast.LENGTH_SHORT).show()
+            _isDiscovering.value = false
+        }
     }
 
     private fun stopDiscovery() {
@@ -214,16 +224,16 @@ class MainActivity : AppCompatActivity() {
                         @Suppress("DEPRECATION")
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     }
-                    device?.let {
-                        val name = it.name ?: "Unknown"
-                        val address = it.address
-                        val deviceType = getDeviceType(it)
+                    device?.let { btDevice ->
+                        val name = btDevice.name ?: "Unknown"
+                        val address = btDevice.address
+                        val type = getDeviceType(btDevice)
 
                         val device = Device(
                             name = name,
                             address = address,
-                            type = deviceType,
-                            isPaired = it.bondState == BluetoothDevice.BOND_BONDED,
+                            type = type,
+                            isPaired = btDevice.bondState == BluetoothDevice.BOND_BONDED,
                             isConnected = false
                         )
 
@@ -231,11 +241,17 @@ class MainActivity : AppCompatActivity() {
                         if (currentList.none { d -> d.address == device.address }) {
                             currentList.add(device)
                             discoveredAdapter.submitList(currentList)
+                            viewModel.addDiscoveredDevice(device)
                         }
                     }
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                     _isDiscovering.value = false
+                    try {
+                        unregisterReceiver(this)
+                    } catch (e: Exception) {
+                        // Receiver not registered
+                    }
                 }
             }
         }
@@ -250,32 +266,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val _isDiscovering = androidx.lifecycle.MutableLiveData(false)
-
-    private fun updateScanButton() {
-        binding.fabScan.setImageResource(
-            if (isScanning) R.drawable.ic_stop else R.drawable.ic_bluetooth_searching
-        )
-    }
-
-    private fun updateBluetoothStatus() {
-        val isEnabled = bluetoothAdapter?.isEnabled == true
-        binding.ivBluetoothStatus?.setImageResource(
-            if (isEnabled) R.drawable.ic_bluetooth_enabled else R.drawable.ic_bluetooth_disabled
-        )
-        binding.tvBluetoothStatus.text = if (isEnabled) "On" else "Off"
-    }
-
-    private fun updateConnectionStatus(state: HidService.HidConnectionState) {
-        binding.ivConnectionStatus?.setImageResource(
-            when (state) {
-                HidService.HidConnectionState.CONNECTED -> R.drawable.ic_connected
-                HidService.HidConnectionState.CONNECTING -> R.drawable.ic_connecting
-                else -> R.drawable.ic_disconnected
-            }
-        )
-    }
-
     private fun showDeviceOptionsDialog(device: Device) {
         val options = arrayOf(
             getString(R.string.option_connect),
@@ -283,28 +273,26 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.option_forget)
         )
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(device.name)
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> viewModel.connectDevice(device)
-                    1 -> showEditDeviceDialog(device)
+                    1 -> {
+                        val intent = Intent(this, ConnectionActivity::class.java).apply {
+                            putExtra("device_address", device.address)
+                            putExtra("device_name", device.name)
+                        }
+                        startActivity(intent)
+                    }
                     2 -> confirmForgetDevice(device)
                 }
             }
             .show()
     }
 
-    private fun showEditDeviceDialog(device: Device) {
-        val intent = Intent(this, ConnectionActivity::class.java).apply {
-            putExtra("device_address", device.address)
-            putExtra("device_name", device.name)
-        }
-        startActivity(intent)
-    }
-
     private fun confirmForgetDevice(device: Device) {
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(R.string.forget_device)
             .setMessage(R.string.confirm_forget_device)
             .setPositiveButton(R.string.forget) { _, _ ->
@@ -312,31 +300,6 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
-    }
-
-    private fun hasPermissions(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-        } else {
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private fun requestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bluetoothPermissionLauncher.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
-        } else {
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    private fun enableBluetooth() {
-        if (bluetoothAdapter?.isEnabled == false) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivity(enableBtIntent)
-        }
-        updateBluetoothStatus()
     }
 
     override fun onDestroy() {
