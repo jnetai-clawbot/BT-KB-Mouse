@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/surfaceVariant"
+    app:cardCornerRadius="8dp"
+    app:rippleColor="@color/rippleLight"
+    app:strokeColor="@color/surfaceBorder"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Profile Icon -->
+        <ImageView
+            android:id="@+id/ivProfileIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_profile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/primary"
+            tools:ignore="ContentDescription" />
+
+        <!-- Active Indicator -->
+        <View
+            android:id="@+id/statusActive"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_status_dot_connected"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toTopOf="@id/ivProfileIcon"
+            tools:visibility="visible" />
+
+        <!-- Profile Name -->
+        <TextView
+            android:id="@+id/tvProfileName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.BTKB.Body"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/btnEdit"
+            app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Default Profile" />
+
+        <!-- Mouse Sensitivity -->
+        <TextView
+            android:id="@+id/tvMouseSensitivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textSecondary"
+            app:layout_constraintEnd_toEndOf="@id/tvProfileName"
+            app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvProfileName"
+            tools:text="Mouse: 50%" />
+
+        <!-- Scroll Speed -->
+        <TextView
+            android:id="@+id/tvScrollSpeed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textSecondary"
+            app:layout_constraintEnd_toEndOf="@id/tvProfileName"
+            app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvMouseSensitivity"
+            tools:text="Scroll: 50%" />
+
+        <!-- Device Address -->
+        <TextView
+            android:id="@+id/tvDeviceAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textHint"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@id/tvProfileName"
+            app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvScrollSpeed"
+            tools:text="AA:BB:CC:DD:EE:FF" />
+
+        <!-- Edit Button -->
+        <ImageButton
+            android:id="@+id/btnEdit"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/textSecondary"
+            tools:ignore="ContentDescription" />
+
+        <!-- Delete Button -->
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/error"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -82,7 +82,7 @@ class DeviceAdapter(
                 DeviceType.KEYBOARD -> R.drawable.ic_keyboard
                 else -> R.drawable.ic_devices
             }
-            binding.ivDeviceType.setImageResource(iconRes)
+            binding.ivDeviceIcon.setImageResource(iconRes)
 
             // Set connection status
             updateConnectionState(device)
@@ -115,7 +115,7 @@ class DeviceAdapter(
             } else {
                 R.color.statusDisconnected
             }
-            binding.viewStatusDot.setBackgroundResource(
+            binding.statusDot.setBackgroundResource(
                 if (isConnected) R.drawable.bg_status_dot_connected
                 else R.drawable.bg_status_dot_disconnected
             )

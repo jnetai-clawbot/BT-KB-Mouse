@@ -169,4 +169,33 @@
     <string name="cd_device_icon">Device icon</string>
     <string name="cd_status_indicator">Connection status</string>
     <string name="cd_battery_indicator">Battery level</string>
+    
+    <!-- Connection Dialog -->
+    <string name="cancel">Cancel</string>
+    <string name="forget">Forget</string>
+    <string name="forget_device">Forget Device</string>
+    <string name="confirm_forget_device">Are you sure you want to forget this device?</string>
+    <string name="option_connect">Connect</string>
+    <string name="option_edit">Edit</string>
+    <string name="option_forget">Forget</string>
+    
+    <!-- Formats -->
+    <string name="connection_time_format">Connected: %s</string>
+    <string name="battery_level_format">Battery: %d%%</string>
+    
+    <!-- Reset Settings -->
+    <string name="reset_settings">Reset Settings</string>
+    <string name="confirm_reset_settings">Are you sure you want to reset all settings to defaults?</string>
+    <string name="reset">Reset</string>
+    
+    <!-- Status -->
+    <string name="status_connected">Connected</string>
+    <string name="status_error">Error</string>
+    <string name="warning">Warning</string>
+    
+    <!-- Profile -->
+    <string name="profile_active">Active</string>
+    <string name="profile_edit">Edit Profile</string>
+    <string name="profile_delete">Delete Profile</string>
+    <string name="confirm_delete_profile">Are you sure you want to delete this profile?</string>
 </resources>

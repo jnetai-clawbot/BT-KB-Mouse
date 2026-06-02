@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -20,10 +21,12 @@ import com.jnetai.btkbmouse.R
 import com.jnetai.btkbmouse.data.Device
 import com.jnetai.btkbmouse.data.DeviceType
 import com.jnetai.btkbmouse.data.Profile
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jnetai.btkbmouse.databinding.ActivityConnectionBinding
 import com.jnetai.btkbmouse.ui.viewmodel.ConnectionState
 import com.jnetai.btkbmouse.ui.viewmodel.ConnectionViewModel
 import com.jnetai.btkbmouse.ui.viewmodel.ConnectionViewModelFactory
+import com.jnetai.btkbmouse.ui.adapter.ProfileAdapter
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -62,6 +65,7 @@ class ConnectionActivity : AppCompatActivity() {
 
         setupToolbar()
         setupUI()
+        setupProfileRecyclerView()
         observeViewModel()
         viewModel.loadDevice(deviceAddress)
     }
@@ -90,6 +94,10 @@ class ConnectionActivity : AppCompatActivity() {
             }
         }
 
+        binding.btnDisconnect.setOnClickListener {
+            viewModel.disconnectDevice()
+        }
+
         binding.btnForget.setOnClickListener {
             showConfirmForgetDialog()
         }
@@ -97,6 +105,15 @@ class ConnectionActivity : AppCompatActivity() {
         binding.switchTrusted.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setTrusted(isChecked)
         }
+
+        binding.btnAddProfile.setOnClickListener {
+            showAddProfileDialog()
+        }
+    }
+
+    private fun showAddProfileDialog() {
+        // TODO: Implement add profile dialog
+        Toast.makeText(this, "Add profile", Toast.LENGTH_SHORT).show()
     }
 
     private fun observeViewModel() {
@@ -119,7 +136,7 @@ class ConnectionActivity : AppCompatActivity() {
                 // Observe profiles
                 launch {
                     viewModel.profiles.collect { profiles ->
-                        updateProfileSpinner(profiles)
+                        updateProfileList(profiles)
                     }
                 }
 
@@ -214,8 +231,8 @@ class ConnectionActivity : AppCompatActivity() {
 
     private fun updateBatteryUI(level: Int?) {
         if (level != null) {
-            binding.tvBattery.visibility = View.VISIBLE
-            binding.tvBattery.text = getString(R.string.battery_level_format, level)
+            binding.tvBatteryLevel.visibility = View.VISIBLE
+            binding.tvBatteryLevel.text = getString(R.string.battery_level_format, level)
 
             val colorRes = when {
                 level >= 60 -> R.color.batteryHigh
@@ -223,9 +240,9 @@ class ConnectionActivity : AppCompatActivity() {
                 level >= 15 -> R.color.batteryLow
                 else -> R.color.batteryCritical
             }
-            binding.tvBattery.setTextColor(ContextCompat.getColor(this, colorRes))
+            binding.tvBatteryLevel.setTextColor(ContextCompat.getColor(this, colorRes))
         } else {
-            binding.tvBattery.visibility = View.GONE
+            binding.tvBatteryLevel.visibility = View.GONE
         }
     }
 
@@ -240,21 +257,28 @@ class ConnectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateProfileSpinner(profiles: List<Profile>) {
-        val profileNames = profiles.map { it.name }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, profileNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerProfile.adapter = adapter
+    private lateinit var profileAdapter: ProfileAdapter
 
-        binding.spinnerProfile.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position < profiles.size) {
-                    viewModel.selectProfile(profiles[position])
-                }
+    private fun setupProfileRecyclerView() {
+        profileAdapter = ProfileAdapter(
+            onProfileClick = { profile ->
+                viewModel.selectProfile(profile)
+            },
+            onProfileEditClick = { profile ->
+                showEditProfileDialog(profile)
+            },
+            onProfileDeleteClick = { profile ->
+                showDeleteProfileDialog(profile)
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        )
+        binding.rvProfiles.apply {
+            layoutManager = LinearLayoutManager(this@ConnectionActivity)
+            adapter = profileAdapter
         }
+    }
+
+    private fun updateProfileList(profiles: List<Profile>) {
+        profileAdapter.submitList(profiles)
     }
 
     private fun startConnectionTimer() {
@@ -295,6 +319,22 @@ class ConnectionActivity : AppCompatActivity() {
             .setPositiveButton(R.string.forget) { _, _ ->
                 viewModel.forgetDevice()
                 finish()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun showEditProfileDialog(profile: Profile) {
+        // TODO: Implement profile editing dialog
+        Toast.makeText(this, "Edit profile: ${profile.name}", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showDeleteProfileDialog(profile: Profile) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.btn_delete_profile)
+            .setMessage(getString(R.string.confirm_delete_profile, profile.name))
+            .setPositiveButton(R.string.action_delete) { _, _ ->
+                viewModel.deleteProfile(profile)
             }
             .setNegativeButton(R.string.cancel, null)
             .show()

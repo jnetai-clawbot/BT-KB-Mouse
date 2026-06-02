@@ -315,6 +315,50 @@
 
                     </LinearLayout>
 
+                    <!-- Key Repeat Rate -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/setting_key_repeat_rate"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/textPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvKeyRepeatRateValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/primary"
+                                tools:text="100ms" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderKeyRepeatRate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="10.0"
+                            android:valueFrom="50.0"
+                            android:valueTo="500.0"
+                            app:thumbColor="@color/accent"
+                            app:trackColorActive="@color/accent"
+                            app:trackColorInactive="@color/sliderTrack" />
+
+                    </LinearLayout>
+
                     <!-- Media Keys -->
                     <LinearLayout
                         android:layout_width="match_parent"

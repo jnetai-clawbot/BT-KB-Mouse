@@ -26,6 +26,7 @@ data class Profile(
 
     // Connection settings
     val autoReconnect: Boolean = true,
+    val isActive: Boolean = false,
 
     // Timestamps
     val createdAt: Long = System.currentTimeMillis(),

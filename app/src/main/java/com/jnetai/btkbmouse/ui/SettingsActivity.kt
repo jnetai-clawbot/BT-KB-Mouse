@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
-import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -49,15 +48,19 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         // Mouse Settings
-        binding.seekbarMouseSensitivity.setOnSeekBarChangeListener(createSeekBarListener { value ->
-            viewModel.updateMouseSensitivity(value)
-            binding.tvMouseSensitivityValue.text = "$value%"
-        })
+        binding.sliderMouseSensitivity.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.updateMouseSensitivity(value.toInt())
+                binding.tvMouseSensitivityValue.text = "${value.toInt()}%"
+            }
+        }
 
-        binding.seekbarScrollSpeed.setOnSeekBarChangeListener(createSeekBarListener { value ->
-            viewModel.updateScrollSpeed(value)
-            binding.tvScrollSpeedValue.text = "$value%"
-        })
+        binding.sliderScrollSpeed.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.updateScrollSpeed(value.toInt())
+                binding.tvScrollSpeedValue.text = "${value.toInt()}%"
+            }
+        }
 
         binding.switchLeftHanded.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateLeftHandedMode(isChecked)
@@ -68,15 +71,19 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Keyboard Settings
-        binding.seekbarKeyRepeatDelay.setOnSeekBarChangeListener(createSeekBarListener { value ->
-            viewModel.updateKeyRepeatDelay(value)
-            binding.tvKeyRepeatDelayValue.text = "${value}ms"
-        })
+        binding.sliderKeyRepeatDelay.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.updateKeyRepeatDelay(value.toInt())
+                binding.tvKeyRepeatDelayValue.text = "${value.toInt()}ms"
+            }
+        }
 
-        binding.seekbarKeyRepeatRate.setOnSeekBarChangeListener(createSeekBarChangeListener { value ->
-            viewModel.updateKeyRepeatRate(value)
-            binding.tvKeyRepeatRateValue.text = "${value}ms"
-        })
+        binding.sliderKeyRepeatRate.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.updateKeyRepeatRate(value.toInt())
+                binding.tvKeyRepeatRateValue.text = "${value.toInt()}ms"
+            }
+        }
 
         binding.switchFunctionKeys.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateFunctionKeyMode(isChecked)
@@ -134,15 +141,19 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Audio Settings
-        binding.seekbarSpeakerVolume.setOnSeekBarChangeListener(createSeekBarListener { value ->
-            viewModel.updateSpeakerVolume(value)
-            binding.tvSpeakerVolumeValue.text = "$value%"
-        })
+        binding.sliderSpeakerVolume.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.updateSpeakerVolume(value.toInt())
+                binding.tvSpeakerVolumeValue.text = "${value.toInt()}%"
+            }
+        }
 
-        binding.seekbarMicGain.setOnSeekBarChangeListener(createSeekBarListener { value ->
-            viewModel.updateMicGain(value)
-            binding.tvMicGainValue.text = "$value%"
-        })
+        binding.sliderMicGain.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.updateMicGain(value.toInt())
+                binding.tvMicGainValue.text = "${value.toInt()}%"
+            }
+        }
 
         // Keyboard Layout Spinner
         val keyboardLayouts = arrayOf("US", "UK", "ISO")
@@ -158,20 +169,20 @@ class SettingsActivity : AppCompatActivity() {
                 launch {
                     viewModel.settings.collect { settings ->
                         // Mouse Settings
-                        binding.seekbarMouseSensitivity.progress = settings.mouseSensitivity
+                        binding.sliderMouseSensitivity.value = settings.mouseSensitivity.toFloat()
                         binding.tvMouseSensitivityValue.text = "${settings.mouseSensitivity}%"
 
-                        binding.seekbarScrollSpeed.progress = settings.scrollSpeed
+                        binding.sliderScrollSpeed.value = settings.scrollSpeed.toFloat()
                         binding.tvScrollSpeedValue.text = "${settings.scrollSpeed}%"
 
                         binding.switchLeftHanded.isChecked = settings.leftHandedMode
                         binding.switchSmoothAcceleration.isChecked = settings.smoothAcceleration
 
                         // Keyboard Settings
-                        binding.seekbarKeyRepeatDelay.progress = settings.keyRepeatDelay
+                        binding.sliderKeyRepeatDelay.value = settings.keyRepeatDelay.toFloat()
                         binding.tvKeyRepeatDelayValue.text = "${settings.keyRepeatDelay}ms"
 
-                        binding.seekbarKeyRepeatRate.progress = settings.keyRepeatRate
+                        binding.sliderKeyRepeatRate.value = settings.keyRepeatRate.toFloat()
                         binding.tvKeyRepeatRateValue.text = "${settings.keyRepeatRate}ms"
 
                         binding.switchFunctionKeys.isChecked = settings.functionKeyMode
@@ -195,10 +206,10 @@ class SettingsActivity : AppCompatActivity() {
                         binding.switchEmulateMic.isChecked = settings.emulateMic
 
                         // Audio Settings
-                        binding.seekbarSpeakerVolume.progress = settings.speakerVolume
+                        binding.sliderSpeakerVolume.value = settings.speakerVolume.toFloat()
                         binding.tvSpeakerVolumeValue.text = "${settings.speakerVolume}%"
 
-                        binding.seekbarMicGain.progress = settings.micGain
+                        binding.sliderMicGain.value = settings.micGain.toFloat()
                         binding.tvMicGainValue.text = "${settings.micGain}%"
 
                         // Select keyboard layout
@@ -239,30 +250,6 @@ class SettingsActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun createSeekBarListener(onProgressChanged: (Int) -> Unit): SeekBar.OnSeekBarChangeListener {
-        return object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    onProgressChanged(progress)
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        }
-    }
-
-    private fun createSeekBarChangeListener(onProgressChanged: (Int) -> Unit): SeekBar.OnSeekBarChangeListener {
-        return object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    onProgressChanged(progress)
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         }
     }
 

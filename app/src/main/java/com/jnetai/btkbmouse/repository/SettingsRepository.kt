@@ -208,4 +208,62 @@ class SettingsRepository(private val context: Context) {
             preferences.clear()
         }
     }
+
+    suspend fun saveSettings(settings: AppSettings) {
+        context.dataStore.edit { preferences ->
+            preferences[MOUSE_SENSITIVITY] = settings.mouseSensitivity
+            preferences[SCROLL_SPEED] = settings.scrollSpeed
+            preferences[LEFT_HANDED_MODE] = settings.leftHandedMode
+            preferences[SMOOTH_ACCELERATION] = settings.smoothAcceleration
+            preferences[INPUT_SMOOTHING] = settings.inputSmoothing
+            preferences[KEY_REPEAT_DELAY] = settings.keyRepeatDelay
+            preferences[KEY_REPEAT_RATE] = settings.keyRepeatRate
+            preferences[KEYBOARD_LAYOUT] = settings.keyboardLayout
+            preferences[FUNCTION_KEY_MODE] = settings.functionKeyMode
+            preferences[MEDIA_KEY_SUPPORT] = settings.mediaKeySupport
+            preferences[AUTO_RECONNECT] = settings.autoReconnect
+            preferences[AUTO_CONNECT_STARTUP] = settings.autoConnectStartup
+            preferences[DARK_THEME] = settings.darkTheme
+            preferences[RUN_IN_BACKGROUND] = settings.runInBackground
+            preferences[PREVENT_SCREEN_LOCK] = settings.preventScreenLock
+            preferences[LOGGING] = settings.logging
+            preferences[START_ON_BOOT] = settings.startOnBoot
+            preferences[EMULATE_KEYBOARD] = settings.emulateKeyboard
+            preferences[EMULATE_MOUSE] = settings.emulateMouse
+            preferences[EMULATE_SPEAKERS] = settings.emulateSpeakers
+            preferences[EMULATE_MIC] = settings.emulateMic
+            preferences[SPEAKER_VOLUME] = settings.speakerVolume
+            preferences[MIC_GAIN] = settings.micGain
+        }
+    }
+
+    suspend fun updateSetting(key: String, value: Any) {
+        context.dataStore.edit { preferences ->
+            when (key) {
+                "mouseSensitivity" -> preferences[MOUSE_SENSITIVITY] = (value as Int).coerceIn(1, 100)
+                "scrollSpeed" -> preferences[SCROLL_SPEED] = (value as Int).coerceIn(1, 100)
+                "leftHandedMode" -> preferences[LEFT_HANDED_MODE] = value as Boolean
+                "smoothAcceleration" -> preferences[SMOOTH_ACCELERATION] = value as Boolean
+                "inputSmoothing" -> preferences[INPUT_SMOOTHING] = value as String
+                "keyRepeatDelay" -> preferences[KEY_REPEAT_DELAY] = (value as Int).coerceIn(100, 1000)
+                "keyRepeatRate" -> preferences[KEY_REPEAT_RATE] = (value as Int).coerceIn(50, 500)
+                "keyboardLayout" -> preferences[KEYBOARD_LAYOUT] = value as String
+                "functionKeyMode" -> preferences[FUNCTION_KEY_MODE] = value as Boolean
+                "mediaKeySupport" -> preferences[MEDIA_KEY_SUPPORT] = value as Boolean
+                "autoReconnect" -> preferences[AUTO_RECONNECT] = value as Boolean
+                "autoConnectStartup" -> preferences[AUTO_CONNECT_STARTUP] = value as Boolean
+                "darkTheme" -> preferences[DARK_THEME] = value as Boolean
+                "runInBackground" -> preferences[RUN_IN_BACKGROUND] = value as Boolean
+                "preventScreenLock" -> preferences[PREVENT_SCREEN_LOCK] = value as Boolean
+                "logging" -> preferences[LOGGING] = value as Boolean
+                "startOnBoot" -> preferences[START_ON_BOOT] = value as Boolean
+                "emulateKeyboard" -> preferences[EMULATE_KEYBOARD] = value as Boolean
+                "emulateMouse" -> preferences[EMULATE_MOUSE] = value as Boolean
+                "emulateSpeakers" -> preferences[EMULATE_SPEAKERS] = value as Boolean
+                "emulateMic" -> preferences[EMULATE_MIC] = value as Boolean
+                "speakerVolume" -> preferences[SPEAKER_VOLUME] = (value as Int).coerceIn(0, 100)
+                "micGain" -> preferences[MIC_GAIN] = (value as Int).coerceIn(0, 100)
+            }
+        }
+    }
 }

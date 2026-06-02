@@ -140,6 +140,17 @@
 
                     </LinearLayout>
 
+                    <!-- Connection Time -->
+                    <TextView
+                        android:id="@+id/tvConnectionTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="@style/TextAppearance.BTKB.Caption"
+                        android:textColor="@color/textHint"
+                        android:visibility="gone"
+                        tools:text="Connected: 00:00" />
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
