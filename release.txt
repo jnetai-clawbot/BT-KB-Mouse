@@ -1,0 +1,12 @@
+✅ BT-KB-Mouse Project Complete
+
+Project Location
+/home/jay/Documents/Scripts/AI/Agent-Zero/BT-KB-Mouse/
+
+GitHub Repository
+https://github.com/jnetai-clawbot/BT-KB-Mouse
+
+Release the apk using github workflows and put the BT-KB-Mouse.apk in releases
+
+Tell me when ready to test
+

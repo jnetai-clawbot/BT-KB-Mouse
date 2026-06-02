@@ -6,11 +6,13 @@ on:
   pull_request:
     branches: [main, master]
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 env:
   JAVA_VERSION: '17'
   ANDROID_COMPILE_SDK: 34
-  ANDROID_BUILD_TOOLS_VERSION: '34.0.0'
 
 jobs:
   build:
@@ -31,8 +33,7 @@ jobs:
         uses: android-actions/setup-android@v2
 
       - name: Create local.properties
-        run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
       - name: Decode Keystore
         id: decode_keystore
@@ -60,39 +61,61 @@ jobs:
           EOF
 
       - name: Build Debug APK
-        run: |
-          ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Build Release APK
         if: steps.decode_keystore.outputs.keystore_exists == 'true'
+        run: ./gradlew assembleRelease --no-daemon -PsigningPropertiesFile=app/signing.properties
+
+      - name: Prepare APK for Release
         run: |
-          ./gradlew assembleRelease --no-daemon -PsigningPropertiesFile=app/signing.properties
+          mkdir -p apk
+          if [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+            cp app/build/outputs/apk/debug/app-debug.apk apk/btkbmouse-debug.apk
+          fi
+          if [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
+            cp app/build/outputs/apk/release/app-release-unsigned.apk apk/btkbmouse-release.apk
+          fi
+          ls -la apk/
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: debug-apk
-          path: app/build/outputs/apk/debug/*.apk
-          retention-days: 7
+          path: apk/btkbmouse-debug.apk
+          retention-days: 30
 
       - name: Upload Release APK
         if: steps.decode_keystore.outputs.keystore_exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: app/build/outputs/apk/release/*.apk
+          path: apk/btkbmouse-release.apk
           retention-days: 30
 
-      - name: Copy APKs to project
-        run: |
-          mkdir -p apk
-          cp app/build/outputs/apk/debug/*.apk apk/ 2>/dev/null || true
-          cp app/build/outputs/apk/release/*.apk apk/ 2>/dev/null || true
-
-      - name: Upload APKs to artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
         with:
-          name: all-apks
-          path: |
-            apk/*.apk
-          retention-days: 30
+          files: |
+            apk/btkbmouse-debug.apk
+            apk/btkbmouse-release.apk
+          body: |
+            # BT-KB-Mouse v1.0.0
+            
+            Professional Bluetooth Mouse & Keyboard control app for Android.
+            
+            ## Features
+            - Bluetooth HID device management
+            - Mouse DPI & scroll speed controls
+            - Keyboard layout & media keys
+            - Dark neon themed UI
+            - Auto-reconnect & foreground service
+            
+            ## Downloads
+            - `btkbmouse-debug.apk` - Debug build
+            - `btkbmouse-release.apk` - Signed release build
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
