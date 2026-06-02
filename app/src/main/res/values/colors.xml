@@ -21,6 +21,12 @@
     <color name="textSecondary">#B3B3B3</color>
     <color name="textHint">#666666</color>
     
+    <!-- Battery Colors -->
+    <color name="batteryHigh">#00E676</color>
+    <color name="batteryMedium">#FFAB00</color>
+    <color name="batteryLow">#FF6D00</color>
+    <color name="batteryCritical">#FF5252</color>
+    
     <!-- Status Colors -->
     <color name="statusConnected">#00E676</color>
     <color name="statusConnecting">#FFAB00</color>

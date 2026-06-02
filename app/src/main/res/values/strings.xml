@@ -175,21 +175,20 @@
     <string name="forget">Forget</string>
     <string name="forget_device">Forget Device</string>
     <string name="confirm_forget_device">Are you sure you want to forget this device?</string>
+    <string name="status_connected">Connected</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="battery_level_format">Battery: %d%%</string>
+    <string name="connection_time_format">Connected: %s</string>
     <string name="option_connect">Connect</string>
     <string name="option_edit">Edit</string>
-    <string name="option_forget">Forget</string>
-    
-    <!-- Formats -->
-    <string name="connection_time_format">Connected: %s</string>
-    <string name="battery_level_format">Battery: %d%%</string>
-    
-    <!-- Reset Settings -->
+    <string name="option_forget">Forget Device</string>
     <string name="reset_settings">Reset Settings</string>
     <string name="confirm_reset_settings">Are you sure you want to reset all settings to defaults?</string>
     <string name="reset">Reset</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
     
     <!-- Status -->
-    <string name="status_connected">Connected</string>
     <string name="status_error">Error</string>
     <string name="warning">Warning</string>
     

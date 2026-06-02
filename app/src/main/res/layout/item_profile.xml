@@ -30,11 +30,11 @@
             tools:ignore="ContentDescription" />
 
         <!-- Active Indicator -->
-        <View
-            android:id="@+id/statusActive"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:background="@drawable/bg_status_dot_connected"
+        <ImageView
+            android:id="@+id/ivActiveIndicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/bg_status_dot_connected"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/ivProfileIcon"
             app:layout_constraintTop_toTopOf="@id/ivProfileIcon"
@@ -100,6 +100,68 @@
             app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
             app:layout_constraintTop_toBottomOf="@id/tvScrollSpeed"
             tools:text="AA:BB:CC:DD:EE:FF" />
+
+        <!-- Last Updated -->
+        <TextView
+            android:id="@+id/tvLastUpdated"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textHint"
+            app:layout_constraintEnd_toEndOf="@id/tvProfileName"
+            app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvDeviceAddress"
+            tools:text="Updated: Jun 01, 12:00" />
+
+        <!-- Feature Indicators -->
+        <TextView
+            android:id="@+id/tvLeftHandedIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@color/surfaceVariant"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="Left"
+            android:textColor="@color/accent"
+            android:textSize="10sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/ivProfileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvLastUpdated" />
+
+        <TextView
+            android:id="@+id/tvSmoothAccelIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/surfaceVariant"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="Smooth"
+            android:textColor="@color/accent"
+            android:textSize="10sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/tvLeftHandedIndicator"
+            app:layout_constraintTop_toBottomOf="@id/tvLastUpdated" />
+
+        <TextView
+            android:id="@+id/tvAutoReconnectIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/surfaceVariant"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="Auto"
+            android:textColor="@color/accent"
+            android:textSize="10sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/tvSmoothAccelIndicator"
+            app:layout_constraintTop_toBottomOf="@id/tvLastUpdated" />
 
         <!-- Edit Button -->
         <ImageButton
