@@ -271,7 +271,7 @@ class MainActivity : AppCompatActivity() {
             when (state) {
                 HidService.HidConnectionState.CONNECTED -> R.drawable.ic_connected
                 HidService.HidConnectionState.CONNECTING -> R.drawable.ic_connecting
-n                else -> R.drawable.ic_disconnected
+                else -> R.drawable.ic_disconnected
             }
         )
     }
