@@ -21,6 +21,7 @@ class SettingsViewModel(
 
     // StateFlow for settings
     private val _settings = MutableStateFlow(DeviceSettings.default())
+    val settingsState: StateFlow<DeviceSettings> = _settings.asStateFlow()
     val settings: StateFlow<DeviceSettings> = _settings.asStateFlow()
 
     // StateFlow for saving state

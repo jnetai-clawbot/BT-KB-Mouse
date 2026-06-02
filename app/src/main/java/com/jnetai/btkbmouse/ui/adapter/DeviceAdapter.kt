@@ -12,7 +12,7 @@ import com.jnetai.btkbmouse.data.DeviceType
 import com.jnetai.btkbmouse.databinding.ItemDeviceBinding
 
 /**
- * RecyclerView Adapter for device list.
+ * RecyclerView adapter for displaying Bluetooth devices.
  * Uses ListAdapter with DiffUtil for efficient updates.
  */
 class DeviceAdapter(
@@ -20,7 +20,15 @@ class DeviceAdapter(
     private val onDeviceLongClick: (Device) -> Unit
 ) : ListAdapter<Device, DeviceAdapter.DeviceViewHolder>(DeviceDiffCallback()) {
 
-    private var connectionStates: Map<String, Boolean> = emptyMap()
+    private val connectionStates = mutableMapOf<String, Boolean>()
+
+    fun updateConnectionState(address: String, isConnected: Boolean) {
+        connectionStates[address] = isConnected
+        val position = currentList.indexOfFirst { it.address == address }
+        if (position != -1) {
+            notifyItemChanged(position, "connection_state")
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         val binding = ItemDeviceBinding.inflate(
@@ -37,16 +45,11 @@ class DeviceAdapter(
 
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) {
-            super.onBindViewHolder(holder, position, payloads)
+            onBindViewHolder(holder, position)
         } else {
             // Partial update for connection state changes
             holder.updateConnectionState(getItem(position))
         }
-    }
-
-    fun updateConnectionStates(states: Map<String, Boolean>) {
-        connectionStates = states
-        notifyItemRangeChanged(0, itemCount, PAYLOAD_CONNECTION_STATE)
     }
 
     inner class DeviceViewHolder(
@@ -105,6 +108,15 @@ class DeviceAdapter(
             } else {
                 binding.tvBattery.visibility = View.GONE
             }
+
+            // Set device type text
+            val typeText = when (device.type) {
+                DeviceType.MOUSE -> binding.root.context.getString(R.string.device_type_mouse)
+                DeviceType.KEYBOARD -> binding.root.context.getString(R.string.device_type_keyboard)
+                DeviceType.COMBO -> binding.root.context.getString(R.string.device_type_combo)
+                else -> binding.root.context.getString(R.string.device_type_unknown)
+            }
+            binding.tvDeviceType.text = typeText
         }
 
         fun updateConnectionState(device: Device) {
@@ -129,24 +141,13 @@ class DeviceAdapter(
         }
     }
 
-    /**
-     * DiffUtil callback for efficient list updates
-     */
     class DeviceDiffCallback : DiffUtil.ItemCallback<Device>() {
         override fun areItemsTheSame(oldItem: Device, newItem: Device): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.address == newItem.address
         }
 
         override fun areContentsTheSame(oldItem: Device, newItem: Device): Boolean {
             return oldItem == newItem
         }
-
-        override fun getChangePayload(oldItem: Device, newItem: Device): Any? {
-            return PAYLOAD_CONNECTION_STATE
-        }
-    }
-
-    companion object {
-        private const val PAYLOAD_CONNECTION_STATE = "connection_state"
     }
 }

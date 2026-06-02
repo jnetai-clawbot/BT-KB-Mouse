@@ -185,6 +185,7 @@
     <string name="reset_settings">Reset Settings</string>
     <string name="confirm_reset_settings">Are you sure you want to reset all settings to defaults?</string>
     <string name="reset">Reset</string>
+    <string name="settings_reset">Settings have been reset</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
     
