@@ -22,7 +22,7 @@ class DeviceAdapter(
         connectionStates[address] = isConnected
         val position = currentList.indexOfFirst { it.address == address }
         if (position != -1) {
-            notifyItemChanged(position, "connection_state")
+            notifyItemChanged(position)
         }
     }
 
@@ -33,14 +33,6 @@ class DeviceAdapter(
 
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    override fun onBindViewHolder(holder: DeviceViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position)
-        } else {
-            holder.updateConnectionState(getItem(position))
-        }
     }
 
     inner class DeviceViewHolder(private val binding: ItemDeviceBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -74,7 +66,12 @@ class DeviceAdapter(
             }
             binding.ivDeviceIcon.setImageResource(iconRes)
 
-            updateConnectionState(device)
+            val isConnected = connectionStates[device.address] == true
+            binding.statusDot.setBackgroundResource(
+                if (isConnected) R.drawable.bg_status_dot_connected else R.drawable.bg_status_dot_disconnected
+            )
+            binding.tvConnectionStatus.text = if (isConnected) "Connected" else "Disconnected"
+
             binding.ivTrusted.visibility = if (device.isTrusted) View.VISIBLE else View.GONE
 
             if (device.batteryLevel != null) {
@@ -92,26 +89,12 @@ class DeviceAdapter(
             }
 
             val typeText = when (device.type) {
-                DeviceType.MOUSE -> binding.root.context.getString(R.string.device_type_mouse)
-                DeviceType.KEYBOARD -> binding.root.context.getString(R.string.device_type_keyboard)
-                DeviceType.COMBO -> binding.root.context.getString(R.string.device_type_combo)
-                else -> binding.root.context.getString(R.string.device_type_unknown)
+                DeviceType.MOUSE -> "MOUSE"
+                DeviceType.KEYBOARD -> "KEYBOARD"
+                DeviceType.COMBO -> "COMBO"
+                else -> "UNKNOWN"
             }
             binding.tvDeviceType.text = typeText
-        }
-
-        fun updateConnectionState(device: Device) {
-            val isConnected = connectionStates[device.address] == true
-            val statusColor = if (isConnected) R.color.statusConnected else R.color.statusDisconnected
-            binding.statusDot.setBackgroundResource(
-                if (isConnected) R.drawable.bg_status_dot_connected else R.drawable.bg_status_dot_disconnected
-            )
-            binding.tvConnectionStatus.text = if (isConnected) {
-                binding.root.context.getString(R.string.connected)
-            } else {
-                binding.root.context.getString(R.string.disconnected)
-            }
-            binding.tvConnectionStatus.setTextColor(binding.root.context.getColor(statusColor))
         }
     }
 

@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         discoveredAdapter = DiscoveredDeviceAdapter(
             onDeviceClick = { device ->
-                viewModel.pairDevice(device)
+                viewModel.pairDeviceByAddress(device.address)
             }
         )
 
