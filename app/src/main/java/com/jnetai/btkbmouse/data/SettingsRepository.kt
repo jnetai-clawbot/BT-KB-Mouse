@@ -2,6 +2,7 @@ package com.jnetai.btkbmouse.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
@@ -216,7 +217,7 @@ class SettingsRepository(
         )
     }
 
-    private fun applySettingsToPreferences(settings: DeviceSettings, preferences: MutablePreferences) {
+    private fun applySettingsToPreferences(settings: DeviceSettings, preferences: androidx.datastore.preferences.core.MutablePreferences) {
         preferences[MOUSE_SENSITIVITY] = settings.mouseSensitivity
         preferences[SCROLL_SPEED] = settings.scrollSpeed
         preferences[LEFT_HANDED] = settings.leftHanded

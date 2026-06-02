@@ -14,7 +14,6 @@ import android.bluetooth.BluetoothGattServer
 import android.bluetooth.BluetoothGattServerCallback
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
