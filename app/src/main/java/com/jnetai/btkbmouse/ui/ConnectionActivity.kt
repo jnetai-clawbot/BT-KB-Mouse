@@ -235,10 +235,10 @@ class ConnectionActivity : AppCompatActivity() {
             binding.tvBatteryLevel.text = getString(R.string.battery_level_format, level)
 
             val colorRes = when {
-                level >= 60 -> R.color.batteryHigh
-                level >= 30 -> R.color.batteryMedium
-                level >= 15 -> R.color.batteryLow
-                else -> R.color.batteryCritical
+                level >= 60 -> R.color.statusConnected
+                level >= 30 -> R.color.statusConnecting
+                level >= 15 -> R.color.neonOrange
+                else -> R.color.statusDisconnected
             }
             binding.tvBatteryLevel.setTextColor(ContextCompat.getColor(this, colorRes))
         } else {
