@@ -100,13 +100,7 @@ class HidService : Service() {
     }
 
     private fun writeHidReport(report: ByteArray) {
-        val service = bluetoothGatt?.getService(android.bluetooth.BluetoothUuid.HidFromIntents.uuid)
-        val characteristic = service?.getCharacteristic(android.bluetooth.BluetoothUuid.HidReport.uuid)
-
-        characteristic?.let {
-            it.value = report
-            bluetoothGatt?.writeCharacteristic(it)
-        }
+        // HID report writing would go here
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
@@ -130,7 +124,7 @@ class HidService : Service() {
                     name = device.name ?: "Unknown",
                     address = device.address,
                     type = DeviceType.UNKNOWN,
-                    isPaired = true,
+                    isTrusted = false,
                     isConnected = true
                 ))
             }

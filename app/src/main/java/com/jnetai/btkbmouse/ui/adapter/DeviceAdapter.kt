@@ -31,6 +31,7 @@ class DeviceAdapter(
         return DeviceViewHolder(binding)
     }
 
+
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
@@ -88,13 +89,7 @@ class DeviceAdapter(
                 binding.tvBattery.visibility = View.GONE
             }
 
-            val typeText = when (device.type) {
-                DeviceType.MOUSE -> "MOUSE"
-                DeviceType.KEYBOARD -> "KEYBOARD"
-                DeviceType.COMBO -> "COMBO"
-                else -> "UNKNOWN"
-            }
-            binding.tvDeviceType.text = typeText
+            binding.tvDeviceType.text = device.type.name
         }
     }
 
