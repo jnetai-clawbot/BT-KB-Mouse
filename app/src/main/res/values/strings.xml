@@ -35,6 +35,16 @@
     <string name="setting_emulate_speakers">Emulate Speakers</string>
     <string name="setting_emulate_microphone">Emulate Microphone</string>
     <string name="category_audio">Audio</string>
+    <string name="setting_key_layout">Key Layout</string>
+    <string name="category_connection">Connection</string>
+    <string name="setting_notify_disconnect">Notify on Disconnect</string>
+    <string name="category_app">App</string>
+    <string name="setting_run_background">Run in Background</string>
+    <string name="setting_start_boot">Start on Boot</string>
+    <string name="category_emulation">Emulation</string>
+    <string name="setting_emulate_speakers">Emulate Speakers</string>
+    <string name="setting_emulate_microphone">Emulate Microphone</string>
+    <string name="category_audio">Audio</string>
     
     <!-- Main Screen -->
     <string name="btn_scan">Scan</string>
