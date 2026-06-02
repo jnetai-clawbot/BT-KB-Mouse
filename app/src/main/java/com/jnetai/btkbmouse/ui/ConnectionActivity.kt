@@ -76,6 +76,7 @@ class ConnectionActivity : AppCompatActivity() {
                     startActivity(android.content.Intent(this, SettingsActivity::class.java))
                     true
                 }
+                else -> false
             }
         }
     }

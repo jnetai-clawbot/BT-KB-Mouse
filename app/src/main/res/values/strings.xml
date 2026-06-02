@@ -138,6 +138,10 @@
     <string name="error_unknown">An unknown error occurred</string>
     
     <!-- Device Types -->
+    <string name="status_disconnected">Disconnected</string>
+    <string name="connecting">Connecting…</string>
+    <string name="connect">Connect</string>
+    <string name="device_type">%s</string>
     <string name="device_type_mouse">MOUSE</string>
     <string name="device_type_keyboard">KEYBOARD</string>
     <string name="device_type_combo">COMBO</string>

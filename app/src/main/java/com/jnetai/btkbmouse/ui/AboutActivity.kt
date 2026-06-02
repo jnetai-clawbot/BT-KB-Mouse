@@ -40,7 +40,7 @@ class AboutActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        binding.btnCheckUpdate.setOnClickListener {
+        binding.btnCheckUpdates.setOnClickListener {
             viewModel.checkForUpdate()
         }
 
@@ -58,10 +58,6 @@ class AboutActivity : AppCompatActivity() {
 
         binding.cardDocumentation.setOnClickListener {
             openUrl(viewModel.documentationUrl)
-        }
-
-        binding.cardBugReport.setOnClickListener {
-            openUrl(viewModel.bugReportUrl)
         }
 
         binding.cardLicense.setOnClickListener {
@@ -103,7 +99,7 @@ class AboutActivity : AppCompatActivity() {
                 // Observe update checking state
                 launch {
                     viewModel.isCheckingUpdate.collect { isChecking ->
-                        binding.btnCheckUpdate.isEnabled = !isChecking
+                        binding.btnCheckUpdates.isEnabled = !isChecking
                         binding.progressUpdate.visibility = if (isChecking) {
                             android.view.View.VISIBLE
                         } else {
