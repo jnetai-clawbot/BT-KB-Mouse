@@ -3,6 +3,8 @@
 Project Location
 /home/jay/Documents/Scripts/AI/Agent-Zero/BT-KB-Mouse/
 
+(Not opencode folder, use above path))
+
 GitHub Repository
 https://github.com/jnetai-clawbot/BT-KB-Mouse
 
