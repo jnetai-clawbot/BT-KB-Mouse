@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.ConnectionActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/background"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/title_connection"
+            app:titleTextColor="@color/textPrimary" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Device Info Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <ImageView
+                        android:id="@+id/ivDeviceIcon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/ic_devices"
+                        app:tint="@color/primary" />
+
+                    <TextView
+                        android:id="@+id/tvDeviceName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textAppearance="@style/TextAppearance.BTKB.Headline"
+                        android:textColor="@color/textPrimary"
+                        tools:text="Bluetooth Mouse" />
+
+                    <TextView
+                        android:id="@+id/tvDeviceAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.BTKB.Caption"
+                        android:textColor="@color/textHint"
+                        tools:text="AA:BB:CC:DD:EE:FF" />
+
+                    <TextView
+                        android:id="@+id/tvDeviceType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="@style/TextAppearance.BTKB.Body"
+                        android:textColor="@color/textSecondary"
+                        tools:text="Type: MOUSE" />
+
+                    <!-- Connection Status -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/statusDot"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:background="@drawable/bg_status_dot" />
+
+                        <TextView
+                            android:id="@+id/tvConnectionStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/statusDisconnected"
+                            tools:text="Disconnected" />
+
+                    </LinearLayout>
+
+                    <!-- Battery Level -->
+                    <LinearLayout
+                        android:id="@+id/batteryContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_battery"
+                            app:tint="@color/statusConnected" />
+
+                        <TextView
+                            android:id="@+id/tvBatteryLevel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textSecondary"
+                            tools:text="85%" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Connection Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnConnect"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/btn_connect"
+                    android:textColor="@color/background"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_bluetooth"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/background" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDisconnect"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/btn_disconnect"
+                    android:textColor="@color/textPrimary"
+                    app:backgroundTint="@color/error"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_bluetooth_disabled"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/textPrimary" />
+
+            </LinearLayout>
+
+            <!-- Connection Progress -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressConnection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/primary"
+                app:trackColor="@color/surfaceVariant" />
+
+            <!-- Profiles Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/category_profiles"
+                            android:textAppearance="@style/TextAppearance.BTKB.Title"
+                            android:textColor="@color/primary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddProfile"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/btn_add_profile"
+                            android:textColor="@color/primary"
+                            app:icon="@drawable/ic_add"
+                            app:iconTint="@color/primary" />
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvProfiles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_profile" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Device Info -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Device Info"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/accent" />
+
+                    <TextView
+                        android:id="@+id/tvLastConnected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textAppearance="@style/TextAppearance.BTKB.Body"
+                        android:textColor="@color/textSecondary"
+                        tools:text="Last connected: 2 hours ago" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Trusted:"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textSecondary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchTrusted"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Forget Device Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnForget"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/btn_forget"
+                android:textColor="@color/error"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_delete"
+                app:iconTint="@color/error"
+                app:strokeColor="@color/error" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

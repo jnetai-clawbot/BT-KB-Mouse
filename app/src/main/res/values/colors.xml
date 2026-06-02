@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Dark Theme Colors -->
+    <color name="background">#0D0D0D</color>
+    <color name="backgroundCard">#1A1A1A</color>
+    <color name="surface">#141414</color>
+    <color name="surfaceVariant">#1E1E1E</color>
+    <color name="surfaceBorder">#2A2A2A</color>
+    
+    <!-- Primary Neon Colors -->
+    <color name="primary">#00E5FF</color>
+    <color name="primaryVariant">#1A3A40</color>
+    <color name="primaryDark">#00B8D4</color>
+    
+    <!-- Accent Neon Colors -->
+    <color name="accent">#FF4081</color>
+    <color name="accentVariant">#401A29</color>
+    
+    <!-- Text Colors -->
+    <color name="textPrimary">#FFFFFF</color>
+    <color name="textSecondary">#B3B3B3</color>
+    <color name="textHint">#666666</color>
+    
+    <!-- Status Colors -->
+    <color name="statusConnected">#00E676</color>
+    <color name="statusConnecting">#FFAB00</color>
+    <color name="statusDisconnected">#FF5252</color>
+    <color name="statusIdle">#757575</color>
+    
+    <!-- Neon Glow Colors -->
+    <color name="neonCyan">#00E5FF</color>
+    <color name="neonPink">#FF4081</color>
+    <color name="neonPurple">#E040FB</color>
+    <color name="neonGreen">#69F0AE</color>
+    <color name="neonOrange">#FFAB40</color>
+    <color name="neonYellow">#FFFF00</color>
+    
+    <!-- Button Colors -->
+    <color name="buttonPrimary">#00E5FF</color>
+    <color name="buttonPrimaryText">#000000</color>
+    <color name="buttonSecondary">#2A2A2A</color>
+    <color name="buttonSecondaryText">#FFFFFF</color>
+    <color name="buttonDanger">#FF5252</color>
+    <color name="buttonDangerText">#FFFFFF</color>
+    
+    <!-- Ripple Effect -->
+    <color name="rippleLight">#33FFFFFF</color>
+    <color name="ripplePrimary">#3300E5FF</color>
+    
+    <!-- Slider Colors -->
+    <color name="sliderTrack">#2A2A2A</color>
+    <color name="sliderThumb">#00E5FF</color>
+    <color name="sliderActive">#00E5FF</color>
+    
+    <!-- Switch Colors -->
+    <color name="switchTrackOff">#2A2A2A</color>
+    <color name="switchTrackOn">#1A3A40</color>
+    <color name="switchThumb">#00E5FF</color>
+    
+    <!-- Card Colors -->
+    <color name="cardBackground">#1A1A1A</color>
+    <color name="cardStroke">#2A2A2A</color>
+    
+    <!-- Misc -->
+    <color name="divider">#2A2A2A</color>
+    <color name="transparent">#00000000</color>
+    <color name="scrim">#99000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

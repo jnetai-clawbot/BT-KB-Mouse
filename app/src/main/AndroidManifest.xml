@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Bluetooth permissions -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Device emulation permissions -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
+    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Foreground service permissions -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Network permissions for GitHub API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Hardware features -->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="true" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <application
+        android:name=".BTKBMouseApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BTKB"
+        tools:targetApi="34">
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Connection Activity -->
+        <activity
+            android:name=".ui.ConnectionActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- About Activity -->
+        <activity
+            android:name=".ui.AboutActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- HID Service -->
+        <service
+            android:name=".ui.service.HidService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+    </application>
+
+</manifest>

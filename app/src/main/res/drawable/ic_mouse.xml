@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <!-- Mouse icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M13,1.07V9H19.93L21.07,8.93C21.67,8.96 22.12,9.42 22.15,10.07C22.16,10.34 22.11,10.6 22,10.83V12C22,17.52 17.52,22 12,22C6.48,22 2,17.52 2,12C2,6.48 6.48,2 12,2C12.15,2 12.3,2.01 12.44,2.02L13,1.07ZM12,4C7.58,4 4,7.58 4,12C4,16.42 7.58,20 12,20C16.42,20 20,16.42 20,12C20,7.58 16.42,4 12,4ZM12,6C12,6 12,12 12,12C12,14.76 13.79,17.11 16.2,17.72L16,14H10V8H15.5L14.17,6H12Z"/>
+</vector>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BT-KB-Mouse</string>
+    <string name="app_version">v1.0.0</string>
+    <string name="made_by">Made by jnetai.com</string>
+    
+    <!-- Navigation -->
+    <string name="title_main">BT-KB-Mouse</string>
+    <string name="title_connection">Connection</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_about">About</string>
+    
+    <!-- Main Screen -->
+    <string name="btn_scan">Scan</string>
+    <string name="btn_stop_scan">Stop Scan</string>
+    <string name="btn_refresh">Refresh</string>
+    <string name="tv_scanning">Scanning for devices…</string>
+    <string name="tv_no_devices">No devices found</string>
+    <string name="tv_paired_devices">Paired Devices</string>
+    <string name="tv_available_devices">Available Devices</string>
+    <string name="tv_last_connected">Last connected: %s</string>
+    
+    <!-- Connection Screen -->
+    <string name="btn_connect">Connect</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="btn_reconnect">Reconnect</string>
+    <string name="btn_forget">Forget Device</string>
+    <string name="btn_settings">Device Settings</string>
+    <string name="tv_connecting">Connecting…</string>
+    <string name="tv_connected">Connected</string>
+    <string name="tv_disconnected">Disconnected</string>
+    <string name="tv_connection_failed">Connection failed</string>
+    <string name="tv_connected_since">Connected for %s</string>
+    <string name="tv_battery_level">Battery: %d%%</string>
+    
+    <!-- Settings Screen -->
+    <string name="section_mouse">Mouse Settings</string>
+    <string name="setting_dpi">Mouse Sensitivity</string>
+    <string name="setting_dpi_value">%d%%</string>
+    <string name="setting_scroll_speed">Scroll Speed</string>
+    <string name="setting_scroll_value">%d%%</string>
+    <string name="setting_left_handed">Left-handed Mode</string>
+    <string name="setting_smooth_acceleration">Smooth Acceleration</string>
+    <string name="setting_gesture_support">Gesture Support</string>
+    
+    <string name="section_keyboard">Keyboard Settings</string>
+    <string name="setting_keyboard_layout">Keyboard Layout</string>
+    <string name="setting_layout_us">US</string>
+    <string name="setting_layout_uk">UK</string>
+    <string name="setting_layout_iso">ISO</string>
+    <string name="setting_fn_mode">Function Key Mode</string>
+    <string name="setting_media_keys">Media Keys</string>
+    <string name="setting_key_repeat_delay">Key Repeat Delay</string>
+    <string name="setting_key_repeat_rate">Key Repeat Rate</string>
+    
+    <string name="section_connection">Connection Settings</string>
+    <string name="setting_auto_reconnect">Auto Reconnect</string>
+    <string name="setting_auto_connect">Auto Connect on Startup</string>
+    <string name="setting_disconnect_notification">Disconnect Notification</string>
+    <string name="setting_connection_timeout">Connection Timeout</string>
+    
+    <string name="section_app">App Settings</string>
+    <string name="setting_prevent_lock">Prevent Screen Lock</string>
+    <string name="setting_background_run">Run in Background</string>
+    <string name="setting_start_on_boot">Start on Boot</string>
+    <string name="setting_dark_theme">Dark Theme</string>
+    <string name="setting_input_smoothing">Input Smoothing</string>
+    <string name="setting_logging">Enable Logging</string>
+    
+    <string name="section_emulation">Device Emulation</string>
+    <string name="setting_emulate_keyboard">Emulate Keyboard</string>
+    <string name="setting_emulate_mouse">Emulate Mouse</string>
+    <string name="setting_emulate_speaker">Emulate Speakers</string>
+    <string name="setting_emulate_mic">Emulate Microphone</string>
+    
+    <string name="section_audio">Audio Settings</string>
+    <string name="setting_speaker_volume">Speaker Volume</string>
+    <string name="setting_mic_gain">Microphone Gain</string>
+    
+    <string name="btn_reset_defaults">Reset to Defaults</string>
+    <string name="btn_save_settings">Save Settings</string>
+    
+    <!-- Profiles -->
+    <string name="section_profiles">Profiles</string>
+    <string name="btn_add_profile">Add Profile</string>
+    <string name="btn_delete_profile">Delete Profile</string>
+    <string name="dialog_profile_name">Profile Name</string>
+    <string name="hint_profile_name">Enter profile name</string>
+    <string name="msg_profile_saved">Profile saved</string>
+    <string name="msg_profile_deleted">Profile deleted</string>
+    
+    <!-- About Screen -->
+    <string name="btn_check_updates">Check for Updates</string>
+    <string name="btn_share">Share App</string>
+    <string name="license_title">MIT License</string>
+    <string name="msg_up_to_date">You\'re up to date!</string>
+    <string name="msg_update_available">Update available: v%s</string>
+    <string name="msg_share_text">Check out BT-KB-Mouse - Control your devices with style! https://github.com/jnetai/BT-KB-Mouse</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_name">BT-KB-Mouse Service</string>
+    <string name="notification_channel_desc">Shows when BT-KB-Mouse is running</string>
+    <string name="notification_title">BT-KB-Mouse Active</string>
+    <string name="notification_text">Connected to %s</string>
+    <string name="notification_disconnected">Disconnected from device</string>
+    
+    <!-- Errors -->
+    <string name="error_bluetooth_off">Please enable Bluetooth</string>
+    <string name="error_permission_denied">Permission denied</string>
+    <string name="error_connection_failed">Failed to connect to device</string>
+    <string name="error_device_not_found">Device not found</string>
+    <string name="error_unknown">An unknown error occurred</string>
+    
+    <!-- Device Types -->
+    <string name="device_type_mouse">MOUSE</string>
+    <string name="device_type_keyboard">KEYBOARD</string>
+    <string name="device_type_combo">COMBO</string>
+    <string name="device_type_unknown">UNKNOWN</string>
+    
+    <!-- Time Formats -->
+    <string name="time_just_now">Just now</string>
+    <string name="time_minutes_ago">%d min ago</string>
+    <string name="time_hours_ago">%d hours ago</string>
+    <string name="time_days_ago">%d days ago</string>
+    
+    <!-- Actions -->
+    <string name="action_connect">Connect</string>
+    <string name="action_disconnect">Disconnect</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Save</string>
+    <string name="action_revert">Revert</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_back">Navigate back</string>
+    <string name="cd_settings">Open settings</string>
+    <string name="cd_device_icon">Device icon</string>
+    <string name="cd_status_indicator">Connection status</string>
+    <string name="cd_battery_indicator">Battery level</string>
+</resources>

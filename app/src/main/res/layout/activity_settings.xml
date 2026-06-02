@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.SettingsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/background"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/title_settings"
+            app:titleTextColor="@color/textPrimary" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <!-- Mouse Settings -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_mouse"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/primary" />
+
+                    <!-- Mouse Sensitivity -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/setting_mouse_sensitivity"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/textPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvMouseSensitivityValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/primary"
+                                tools:text="50%" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderMouseSensitivity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="1.0"
+                            android:valueFrom="1.0"
+                            android:valueTo="100.0"
+                            app:thumbColor="@color/primary"
+                            app:trackColorActive="@color/primary"
+                            app:trackColorInactive="@color/sliderTrack" />
+
+                    </LinearLayout>
+
+                    <!-- Scroll Speed -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/setting_scroll_speed"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/textPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvScrollSpeedValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/primary"
+                                tools:text="50%" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderScrollSpeed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="1.0"
+                            android:valueFrom="1.0"
+                            android:valueTo="100.0"
+                            app:thumbColor="@color/primary"
+                            app:trackColorActive="@color/primary"
+                            app:trackColorInactive="@color/sliderTrack" />
+
+                    </LinearLayout>
+
+                    <!-- Left-Handed Mode -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_left_handed"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchLeftHanded"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- Smooth Acceleration -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_smooth_acceleration"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchSmoothAcceleration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Keyboard Settings -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_keyboard"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/accent" />
+
+                    <!-- Key Layout -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_key_layout"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/toggleKeyLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnUsLayout"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="US" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnUkLayout"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="UK" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnIsoLayout"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ISO" />
+
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    </LinearLayout>
+
+                    <!-- Key Repeat Delay -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/setting_key_repeat_delay"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/textPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvKeyRepeatDelayValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/primary"
+                                tools:text="500ms" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderKeyRepeatDelay"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="50.0"
+                            android:valueFrom="100.0"
+                            android:valueTo="1000.0"
+                            app:thumbColor="@color/accent"
+                            app:trackColorActive="@color/accent"
+                            app:trackColorInactive="@color/sliderTrack" />
+
+                    </LinearLayout>
+
+                    <!-- Media Keys -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_media_keys"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchMediaKeys"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Connection Settings -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_connection"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/neonGreen" />
+
+                    <!-- Auto Reconnect -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_auto_reconnect"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchAutoReconnect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- Auto Connect on Startup -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_auto_connect"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchAutoConnect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- Notify on Disconnect -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_notify_disconnect"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchNotifyDisconnect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- App Behavior Settings -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_app"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/neonOrange" />
+
+                    <!-- Prevent Screen Lock -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_prevent_lock"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchPreventLock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- Run in Background -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_run_background"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchRunBackground"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- Start on Boot -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_start_boot"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchStartBoot"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Emulation Settings -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_emulation"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/neonPurple" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_emulate_keyboard"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchEmulateKeyboard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_emulate_mouse"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchEmulateMouse"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_emulate_speakers"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchEmulateSpeakers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/setting_emulate_microphone"
+                            android:textAppearance="@style/TextAppearance.BTKB.Body"
+                            android:textColor="@color/textPrimary" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchEmulateMicrophone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Audio Settings -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_audio"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/neonYellow" />
+
+                    <!-- Speaker Volume -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/setting_speaker_volume"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/textPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvSpeakerVolumeValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/neonYellow"
+                                tools:text="80%" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderSpeakerVolume"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="1.0"
+                            android:valueFrom="0.0"
+                            android:valueTo="100.0"
+                            app:thumbColor="@color/neonYellow"
+                            app:trackColorActive="@color/neonYellow"
+                            app:trackColorInactive="@color/sliderTrack" />
+
+                    </LinearLayout>
+
+                    <!-- Mic Gain -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/setting_mic_gain"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/textPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvMicGainValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.BTKB.Body"
+                                android:textColor="@color/neonYellow"
+                                tools:text="50%" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderMicGain"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="1.0"
+                            android:valueFrom="0.0"
+                            android:valueTo="100.0"
+                            app:thumbColor="@color/neonYellow"
+                            app:trackColorActive="@color/neonYellow"
+                            app:trackColorInactive="@color/sliderTrack" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Reset Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResetDefaults"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/btn_reset_defaults"
+                android:textColor="@color/error"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="@color/error"
+                app:strokeColor="@color/error" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

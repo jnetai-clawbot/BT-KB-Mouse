@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/surfaceVariant"
+    app:cardCornerRadius="8dp"
+    app:rippleColor="@color/rippleLight"
+    app:strokeColor="@color/surfaceBorder"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Device Icon -->
+        <ImageView
+            android:id="@+id/ivDeviceIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_devices"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/primary"
+            tools:ignore="ContentDescription" />
+
+        <!-- Status Dot -->
+        <View
+            android:id="@+id/statusDot"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/bg_status_dot"
+            app:layout_constraintBottom_toBottomOf="@id/ivDeviceIcon"
+            app:layout_constraintEnd_toEndOf="@id/ivDeviceIcon" />
+
+        <!-- Device Name -->
+        <TextView
+            android:id="@+id/tvDeviceName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.BTKB.Body"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/tvBattery"
+            app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Bluetooth Mouse" />
+
+        <!-- Device Address -->
+        <TextView
+            android:id="@+id/tvDeviceAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textHint"
+            app:layout_constraintEnd_toEndOf="@id/tvDeviceName"
+            app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvDeviceName"
+            tools:text="AA:BB:CC:DD:EE:FF" />
+
+        <!-- Device Type -->
+        <TextView
+            android:id="@+id/tvDeviceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/primary"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvDeviceAddress"
+            tools:text="MOUSE" />
+
+        <!-- Trusted Indicator -->
+        <ImageView
+            android:id="@+id/ivTrusted"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_verified"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/tvDeviceType"
+            app:layout_constraintStart_toEndOf="@id/tvDeviceType"
+            app:layout_constraintTop_toTopOf="@id/tvDeviceType"
+            app:tint="@color/primary"
+            tools:ignore="ContentDescription"
+            tools:visibility="visible" />
+
+        <!-- Battery Level -->
+        <TextView
+            android:id="@+id/tvBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.BTKB.Body"
+            android:textColor="@color/statusConnected"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="85%"
+            tools:visibility="visible" />
+
+        <!-- Connection Status -->
+        <TextView
+            android:id="@+id/tvConnectionStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBattery"
+            tools:text="Connected" />
+
+        <!-- Last Connected -->
+        <TextView
+            android:id="@+id/tvLastConnected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.BTKB.Caption"
+            android:textColor="@color/textHint"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="2 hours ago" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

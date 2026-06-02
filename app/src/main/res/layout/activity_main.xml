@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/background"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/textPrimary"
+            app:menu="@menu/menu_main" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Saved Devices Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSavedDevices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_saved_devices"
+                        android:textAppearance="@style/TextAppearance.BTKB.Title"
+                        android:textColor="@color/primary" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvSavedDevices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:nestedScrollingEnabled="false"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/item_device" />
+
+                    <TextView
+                        android:id="@+id/tvNoSavedDevices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/no_saved_devices"
+                        android:textColor="@color/textHint"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Nearby Devices Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardNearbyDevices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/backgroundCard"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/surfaceBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_nearby_devices"
+                            android:textAppearance="@style/TextAppearance.BTKB.Title"
+                            android:textColor="@color/accent" />
+
+                        <ProgressBar
+                            android:id="@+id/progressScan"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:visibility="gone"
+                            android:indeterminateTint="@color/primary" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvScanning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/scanning"
+                        android:textAppearance="@style/TextAppearance.BTKB.Caption"
+                        android:textColor="@color/primary"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvDiscoveredDevices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:nestedScrollingEnabled="false"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_discovered_device" />
+
+                    <TextView
+                        android:id="@+id/tvNoDevicesFound"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/no_devices_found"
+                        android:textColor="@color/textHint"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Empty State -->
+            <LinearLayout
+                android:id="@+id/emptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:alpha="0.5"
+                    android:src="@drawable/ic_bluetooth"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/no_saved_devices"
+                    android:textAppearance="@style/TextAppearance.BTKB.Title"
+                    android:textColor="@color/textSecondary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/tap_to_scan"
+                    android:textAppearance="@style/TextAppearance.BTKB.Body"
+                    android:textColor="@color/textHint" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Scan FAB -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:text="@string/btn_scan"
+        android:textColor="@color/background"
+        app:backgroundTint="@color/primary"
+        app:icon="@drawable/ic_bluetooth_search"
+        app:iconTint="@color/background" />
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/backgroundCard"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:menu="@menu/menu_bottom_nav" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

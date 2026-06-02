@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Dark Theme -->
+    <style name="Theme.BTKB" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accentVariant</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/textPrimary</item>
+        <item name="colorSurfaceVariant">@color/surfaceVariant</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">@color/textPrimary</item>
+        <item name="colorError">@color/statusDisconnected</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Text Appearances -->
+    <style name="TextAppearance.BTKB.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.BTKB.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.BTKB.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.BTKB.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/textHint</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Button Styles -->
+    <style name="Widget.BTKB.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/buttonPrimaryText</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="rippleColor">@color/ripplePrimary</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="iconTint">@color/buttonPrimaryText</item>
+    </style>
+
+    <style name="Widget.BTKB.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="strokeColor">@color/primary</item>
+        <item name="rippleColor">@color/ripplePrimary</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="iconTint">@color/primary</item>
+    </style>
+
+    <style name="Widget.BTKB.Button.Danger" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/buttonDangerText</item>
+        <item name="backgroundTint">@color/buttonDanger</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <!-- Card Style -->
+    <style name="Widget.BTKB.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/backgroundCard</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="strokeColor">@color/surfaceBorder</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Switch Style -->
+    <style name="Widget.BTKB.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="trackTint">@color/switchTrackOff</item>
+        <item name="thumbTint">@color/switchThumb</item>
+    </style>
+
+    <!-- Slider Style -->
+    <style name="Widget.BTKB.Slider" parent="Widget.Material3.Slider">
+        <item name="thumbColor">@color/sliderThumb</item>
+        <item name="trackColorActive">@color/sliderActive</item>
+        <item name="trackColorInactive">@color/sliderTrack</item>
+    </style>
+
+    <!-- Toolbar Style -->
+    <style name="Widget.BTKB.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/background</item>
+        <item name="titleTextColor">@color/textPrimary</item>
+        <item name="navigationIconTint">@color/primary</item>
+    </style>
+
+    <!-- Dialog Style -->
+    <style name="Theme.BTKB.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/backgroundCard</item>
+        <item name="android:background">@color/backgroundCard</item>
+    </style>
+
+    <!-- Bottom Sheet Style -->
+    <style name="Theme.BTKB.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.BTKB.BottomSheet</item>
+    </style>
+
+    <style name="Widget.BTKB.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">@color/backgroundCard</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.BTKB.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.BTKB.BottomSheet" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+</resources>
