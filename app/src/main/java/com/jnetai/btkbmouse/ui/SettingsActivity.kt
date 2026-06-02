@@ -102,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
                 binding.sliderScrollSpeed.value = settings.scrollSpeed.toFloat()
                 binding.tvScrollSpeedValue.text = "${settings.scrollSpeed}%"
 
-                binding.switchLeftHanded.isChecked = settings.leftHandedMode
+                binding.switchLeftHanded.isChecked = settings.leftHanded
                 binding.switchSmoothAcceleration.isChecked = settings.smoothAcceleration
 
                 binding.sliderKeyRepeatDelay.value = settings.keyRepeatDelay.toFloat()

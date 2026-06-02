@@ -11,10 +11,6 @@ import com.jnetai.btkbmouse.data.Device
 import com.jnetai.btkbmouse.data.DeviceType
 import com.jnetai.btkbmouse.databinding.ItemDeviceBinding
 
-/**
- * RecyclerView adapter for displaying Bluetooth devices.
- * Uses ListAdapter with DiffUtil for efficient updates.
- */
 class DeviceAdapter(
     private val onDeviceClick: (Device) -> Unit,
     private val onDeviceLongClick: (Device) -> Unit
@@ -31,11 +27,7 @@ class DeviceAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
-        val binding = ItemDeviceBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
+        val binding = ItemDeviceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DeviceViewHolder(binding)
     }
 
@@ -47,27 +39,23 @@ class DeviceAdapter(
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
         } else {
-            // Partial update for connection state changes
             holder.updateConnectionState(getItem(position))
         }
     }
 
-    inner class DeviceViewHolder(
-        private val binding: ItemDeviceBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class DeviceViewHolder(private val binding: ItemDeviceBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.root.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onDeviceClick(getItem(position))
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onDeviceClick(getItem(pos))
                 }
             }
-
             binding.root.setOnLongClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onDeviceLongClick(getItem(position))
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onDeviceLongClick(getItem(pos))
                     true
                 } else {
                     false
@@ -79,7 +67,6 @@ class DeviceAdapter(
             binding.tvDeviceName.text = device.name
             binding.tvDeviceAddress.text = device.address
 
-            // Set device type icon
             val iconRes = when (device.type) {
                 DeviceType.MOUSE -> R.drawable.ic_mouse
                 DeviceType.KEYBOARD -> R.drawable.ic_keyboard
@@ -87,17 +74,12 @@ class DeviceAdapter(
             }
             binding.ivDeviceIcon.setImageResource(iconRes)
 
-            // Set connection status
             updateConnectionState(device)
-
-            // Set trusted indicator
             binding.ivTrusted.visibility = if (device.isTrusted) View.VISIBLE else View.GONE
 
-            // Set battery level
             if (device.batteryLevel != null) {
                 binding.tvBattery.visibility = View.VISIBLE
                 binding.tvBattery.text = "${device.batteryLevel}%"
-
                 val batteryColor = when {
                     device.batteryLevel >= 60 -> R.color.batteryHigh
                     device.batteryLevel >= 30 -> R.color.batteryMedium
@@ -109,7 +91,6 @@ class DeviceAdapter(
                 binding.tvBattery.visibility = View.GONE
             }
 
-            // Set device type text
             val typeText = when (device.type) {
                 DeviceType.MOUSE -> binding.root.context.getString(R.string.device_type_mouse)
                 DeviceType.KEYBOARD -> binding.root.context.getString(R.string.device_type_keyboard)
@@ -121,17 +102,10 @@ class DeviceAdapter(
 
         fun updateConnectionState(device: Device) {
             val isConnected = connectionStates[device.address] == true
-
-            val statusColor = if (isConnected) {
-                R.color.statusConnected
-            } else {
-                R.color.statusDisconnected
-            }
+            val statusColor = if (isConnected) R.color.statusConnected else R.color.statusDisconnected
             binding.statusDot.setBackgroundResource(
-                if (isConnected) R.drawable.bg_status_dot_connected
-                else R.drawable.bg_status_dot_disconnected
+                if (isConnected) R.drawable.bg_status_dot_connected else R.drawable.bg_status_dot_disconnected
             )
-
             binding.tvConnectionStatus.text = if (isConnected) {
                 binding.root.context.getString(R.string.connected)
             } else {
@@ -142,12 +116,7 @@ class DeviceAdapter(
     }
 
     class DeviceDiffCallback : DiffUtil.ItemCallback<Device>() {
-        override fun areItemsTheSame(oldItem: Device, newItem: Device): Boolean {
-            return oldItem.address == newItem.address
-        }
-
-        override fun areContentsTheSame(oldItem: Device, newItem: Device): Boolean {
-            return oldItem == newItem
-        }
+        override fun areItemsTheSame(oldItem: Device, newItem: Device) = oldItem.address == newItem.address
+        override fun areContentsTheSame(oldItem: Device, newItem: Device) = oldItem == newItem
     }
 }
