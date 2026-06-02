@@ -5,12 +5,12 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothProfile
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
+import com.jnetai.btkbmouse.R
 import com.jnetai.btkbmouse.data.Device
 import com.jnetai.btkbmouse.data.DeviceType
 
@@ -20,15 +20,13 @@ class HidService : Service() {
     private var bluetoothGatt: BluetoothGatt? = null
 
     private val _connectionState = MutableLiveData<HidConnectionState>()
-    val connectionState = _connectionState
+    val connectionState: MutableLiveData<HidConnectionState> = _connectionState
 
     private val _connectedDevice = MutableLiveData<Device?>()
-    val connectedDevice = _connectedDevice
+    val connectedDevice: MutableLiveData<Device?> = _connectedDevice
 
     private val _inputEvent = MutableLiveData<InputEvent?>()
-    val inputEvent = _inputEvent
-
-    private val deviceTypeMap = mutableMapOf<String, DeviceType>()
+    val inputEvent: MutableLiveData<InputEvent?> = _inputEvent
 
     inner class LocalBinder : Binder() {
         fun getService(): HidService = this@HidService
@@ -57,7 +55,7 @@ class HidService : Service() {
         return android.app.Notification.Builder(this, "hid_service")
             .setContentTitle("BT KB Mouse")
             .setContentText("Running in background")
-            .setSmallIcon(com.jnetai.btkbmouse.R.drawable.ic_mouse)
+            .setSmallIcon(R.drawable.ic_mouse)
             .build()
     }
 
@@ -88,8 +86,8 @@ class HidService : Service() {
     fun sendMouseEvent(buttons: Int, dx: Float, dy: Float, wheel: Int) {
         val report = ByteArray(4)
         report[0] = buttons.toByte()
-        report[1] = (dx.toInt() and 0xFF).toByte()
-        report[2] = (dy.toInt() and 0xFF).toByte()
+        report[1] = dx.toInt().toByte()
+        report[2] = dy.toInt().toByte()
         report[3] = wheel.toByte()
         writeHidReport(report)
     }
@@ -102,8 +100,8 @@ class HidService : Service() {
     }
 
     private fun writeHidReport(report: ByteArray) {
-        val service = bluetoothGatt?.getService(android.bluetooth.BluetoothUuid.HID_DEVICE_FROM_INTENT.uuid)
-        val characteristic = service?.getCharacteristic(android.bluetooth.BluetoothUuid.HID_REPORT.uuid)
+        val service = bluetoothGatt?.getService(android.bluetooth.BluetoothUuid.HidFromIntents.uuid)
+        val characteristic = service?.getCharacteristic(android.bluetooth.BluetoothUuid.HidReport.uuid)
 
         characteristic?.let {
             it.value = report
@@ -128,11 +126,10 @@ class HidService : Service() {
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 val device = gatt.device
-                val type = deviceTypeMap[device.address] ?: DeviceType.UNKNOWN
                 _connectedDevice.postValue(Device(
                     name = device.name ?: "Unknown",
                     address = device.address,
-                    type = type,
+                    type = DeviceType.UNKNOWN,
                     isPaired = true,
                     isConnected = true
                 ))
@@ -151,7 +148,7 @@ class HidService : Service() {
         if (data.isEmpty()) return
 
         when (data[0].toInt() and 0x01) {
-            0 -> { /* Mouse report */
+            0 -> {
                 if (data.size >= 3) {
                     _inputEvent.postValue(InputEvent.MouseData(
                         buttons = data[0].toInt(),
@@ -160,7 +157,7 @@ class HidService : Service() {
                     ))
                 }
             }
-            1 -> { /* Keyboard report */
+            1 -> {
                 if (data.size >= 2) {
                     _inputEvent.postValue(InputEvent.KeyboardData(
                         modifiers = data[0].toInt(),

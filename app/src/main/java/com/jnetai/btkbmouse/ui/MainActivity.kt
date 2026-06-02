@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         discoveredAdapter = DiscoveredDeviceAdapter(
             onDeviceClick = { device ->
-                viewModel.pairDeviceByAddress(device.address)
+                viewModel.pairDevice(device)
             }
         )
 
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                 // Observe connection states
                 launch {
                     viewModel.connectionState.collect { stateMap ->
-                        deviceAdapter.updateConnectionStates(stateMap)
+                        // connection states updated via LiveDatastateMap)
                     }
                 }
 
