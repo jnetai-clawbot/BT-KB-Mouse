@@ -90,10 +90,12 @@ class BluetoothManager(private val app: Application) {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             hidService = (binder as HidForegroundService.LocalBinder).getService()
             serviceBound = true
-            hidService?.onStateChanged = { reg, err ->
-                _connectionState.value = _connectionState.value.copy(isHidRegistered = reg, error = err)
+            hidService?.onStatusChanged = { reg, connected, err ->
+                _connectionState.value = _connectionState.value.copy(
+                    isHidRegistered = reg, isHidConnected = connected, isConnected = connected, error = err
+                )
             }
-            hidService?.onDeviceConnected = { dev ->
+            hidService?.onDeviceChanged = { dev ->
                 _connectionState.value = _connectionState.value.copy(
                     isConnected = dev != null, isHidConnected = dev != null,
                     deviceName = dev?.name ?: "", deviceAddress = dev?.address ?: ""
