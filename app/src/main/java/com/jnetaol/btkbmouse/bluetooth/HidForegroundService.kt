@@ -173,24 +173,15 @@ class HidForegroundService : Service() {
                 while (discoveryKeepAlive) {
                     try {
                         val adapter = btAdapter
-                        if (adapter != null && adapter.isEnabled) {
+                        if (adapter?.isEnabled == true) {
                             val currentMode = adapter.scanMode
                             if (currentMode != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-                                DebugLogger.i(TAG, "BK-SVC Setting discoverable mode (current=$currentMode)")
-                                @Suppress("DEPRECATION")
-                        adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-                        if (DISCOVERABLE_DURATION > 0) {
-                            @Suppress("DEPRECATION")
-                            adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, DISCOVERABLE_DURATION)
-                        } else {
-                            @Suppress("DEPRECATION")
-                            adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-                        }
+                                DebugLogger.i(TAG, "BK-SVC ScanMode=$currentMode (non-discoverable)")
                             }
                         }
                         Thread.sleep(300000)
                     } catch (e: Exception) {
-                        DebugLogger.e(TAG, "BK-SVC Discoverable error", e)
+                        DebugLogger.e(TAG, "BK-SVC Discoverable check error", e)
                         Thread.sleep(30000)
                     }
                 }
