@@ -98,18 +98,20 @@ class BluetoothManager(private val app: Application) {
         try { _paired.value = adapter?.bondedDevices?.map { DiscoveredDevice(it, 0, it.name ?: "Unknown") } ?: emptyList() } catch (_: Exception) {}
     }
 
+    fun refreshPairedDevices() = refreshPaired()
+
     fun startDiscovery() = try {
         _scan.value = true; _discovered.value = emptyList()
         val ok = adapter?.startDiscovery() ?: false
         if (!ok) _scan.value = false
-        else { scanStop?.let { handler.removeCallbacks(it) }; scanStop = Runnable { stopDiscovery() }; handler.postDelayed(scanStop, 30000L) }
+        val r = Runnable { stopDiscovery() }; scanStop = r; handler.postDelayed(r, 30000L)
         ok
     } catch (_: Exception) { _scan.value = false; false }
 
     fun stopDiscovery() = try { adapter?.cancelDiscovery(); _scan.value = false } catch (_: Exception) {}
 
     @SuppressLint("MissingPermission")
-    fun pairDevice(d: BluetoothDevice) = try { if (d.bondState == BluetoothDevice.BOND_NONE) d.createBond() } catch (_: Exception) {}
+    fun pairDevice(d: BluetoothDevice) { try { if (d.bondState == BluetoothDevice.BOND_NONE) d.createBond() } catch (_: Exception) {} }
 
     fun connectDevice(d: BluetoothDevice) { hidService?.reinit() }
     fun disconnect() { _conn.value = ConnectionState(isHidRegistered = hidService?.registered ?: false) }
