@@ -317,7 +317,7 @@ class BluetoothManager(private val app: Application) {
                     isHidAppRegistered = false
                     handler.postDelayed({ forceReinit() }, 2000L)
                 }
-            }, BluetoothProfile.HID_DEVICE)
+            }, 19) // raw int 19 = HID_DEVICE profile
         } catch (e: Exception) {
             DebugLogger.e(TAG, "BT-053 Bind HID failed", e)
             scheduleRegister()
