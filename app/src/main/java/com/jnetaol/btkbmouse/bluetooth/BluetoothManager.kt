@@ -402,6 +402,26 @@ class BluetoothManager(private val app: Application) {
         }
     }
 
+    fun connectDevice(device: BluetoothDevice) {
+        _connectionState.value = ConnectionState(
+            isConnected = true,
+            deviceName = device.name ?: "Unknown",
+            deviceAddress = device.address
+        )
+        DebugLogger.i(TAG, "BT-050 Device selected: ${device.name}")
+        initHidService()
+    }
+
+    fun disconnect() {
+        try {
+            connectedHidDevice = null
+            _connectionState.value = ConnectionState()
+            DebugLogger.i(TAG, "BT-070 Disconnected from host")
+        } catch (e: Exception) {
+            DebugLogger.e(TAG, "BT-009 Disconnect error", e)
+        }
+    }
+
     fun refreshPairedDevices() {
         try {
             val devices = btAdapter?.bondedDevices?.map { device ->
