@@ -1,0 +1,7 @@
+I have paired android s9 samsung phone with linux ubuntu rpi 5 and it only shows audio and calls I need it to also register as hid kb and mouse devices aswell also the app wether paired or not or connected or not dosnt show connected I want to pair and connect via the app and register hid devices if already paired or connected or not aswell the original app did all this perfectly so mimic exactly how it does it for this pro app, then push to github and build new release via workflows as v2.0.2
+
+github repository Release location https://github.com/jnetai-clawbot/BT-KB-Mouse/releases
+
+use github workflows and release with same key-store so it cxan update
+
+tell me when ready to test!
