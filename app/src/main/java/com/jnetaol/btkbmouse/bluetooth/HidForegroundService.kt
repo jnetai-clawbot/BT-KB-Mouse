@@ -1,5 +1,6 @@
 package com.jnetaol.btkbmouse.bluetooth
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +12,8 @@ import android.bluetooth.BluetoothHidDevice
 import android.bluetooth.BluetoothHidDeviceAppQosSettings
 import android.bluetooth.BluetoothHidDeviceAppSdpSettings
 import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothServerSocket
+import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
@@ -20,18 +23,21 @@ import android.os.IBinder
 import android.os.Looper
 import com.jnetaol.btkbmouse.MainActivity
 import com.jnetaol.btkbmouse.logger.DebugLogger
+import java.util.UUID
 
 class HidForegroundService : Service() {
     companion object {
         const val TAG = "HidService"
         const val CHANNEL_ID = "bt_hid_service"
         const val NOTIFICATION_ID = 1001
-        const val SDP_RECORD_NAME = "BT KB & Mouse Pro"
-        const val SDP_DESCRIPTION = "Professional Keyboard and Mouse"
+        const val SDP_NAME = "BT KB & Mouse Pro"
+        const val SDP_DESC = "Professional Keyboard and Mouse"
         const val SDP_PROVIDER = "jnetai.com"
         const val REPORT_ID_KEYBOARD: Byte = 1
         const val REPORT_ID_MOUSE: Byte = 2
         const val REPORT_ID_CONSUMER: Byte = 3
+        val HID_UUID = UUID.fromString("00001124-0000-1000-8000-00805F9B34FB")
+        val HID_SDP_UUID = UUID.fromString("00001112-0000-1000-8000-00805F9B34FB")
     }
 
     private val binder = LocalBinder()
@@ -39,13 +45,14 @@ class HidForegroundService : Service() {
 
     private var btAdapter: BluetoothAdapter? = null
     private var hidProxy: BluetoothHidDevice? = null
+    private var serverSocket: BluetoothServerSocket? = null
     var connectedDevice: BluetoothDevice? = null
         private set
     var isRegistered = false
         private set
-    private var isBinding = false
-    private var registerAttempt = 0
-    private var retryRunnable: Runnable? = null
+    private var isHidBound = false
+    private var reinitScheduled = false
+    private var initCount = 0
 
     var onStatusChanged: ((Boolean, Boolean, String?) -> Unit)? = null
     var onDeviceChanged: ((BluetoothDevice?) -> Unit)? = null
@@ -60,24 +67,78 @@ class HidForegroundService : Service() {
         override fun onReceive(ctx: android.content.Context?, intent: Intent?) {
             when (intent?.action) {
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
-                    val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-                    if (state == BluetoothAdapter.STATE_ON) {
-                        DebugLogger.i(TAG, "BT ON -> init")
-                        handler.postDelayed({ initHid() }, 3000L)
-                    } else if (state == BluetoothAdapter.STATE_OFF) {
+                    if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_ON) {
+                        DebugLogger.i(TAG, "BT on -> start HID")
+                        scheduleInit(1000L)
+                    } else {
                         isRegistered = false
-                        notifyState()
+                        notifyChanged()
+                    }
+                }
+                BluetoothDevice.ACTION_ACL_CONNECTED -> {
+                    val dev = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                    DebugLogger.i(TAG, "ACL connected: ${dev?.name}")
+                    scheduleInit(1000L)
+                }
+                BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+                    val dev = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                    DebugLogger.i(TAG, "ACL disconnected: ${dev?.name}")
+                    if (dev == connectedDevice) {
+                        connectedDevice = null
+                        onDeviceChanged?.invoke(null)
+                        notifyChanged()
                     }
                 }
                 BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
-                    val bond = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+                    val bond = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, -1)
                     if (bond == BluetoothDevice.BOND_BONDED) {
-                        DebugLogger.i(TAG, "New bond -> re-register HID")
-                        handler.postDelayed({ reinit() }, 2000L)
+                        DebugLogger.i(TAG, "Device bonded -> re-register HID")
+                        scheduleInit(2000L)
                     }
                 }
             }
         }
+    }
+
+    private val hidCallback = object : BluetoothHidDevice.Callback() {
+        override fun onAppStatusChanged(plugged: BluetoothDevice?, registered: Boolean) {
+            DebugLogger.i(TAG, "HID status: reg=$registered plugged=${plugged?.name}")
+            isRegistered = registered
+            if (registered && plugged != null) {
+                connectedDevice = plugged
+                onDeviceChanged?.invoke(plugged)
+                DebugLogger.i(TAG, "HID HOST CONNECTED: ${plugged.name} (${plugged.address})")
+            } else if (!registered) {
+                connectedDevice = null
+                onDeviceChanged?.invoke(null)
+                scheduleInit(2000L)
+            }
+            notifyChanged()
+        }
+
+        override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
+            DebugLogger.i(TAG, "HID conn state=$state dev=${device?.name}")
+            if (state == BluetoothProfile.STATE_CONNECTED) {
+                connectedDevice = device
+                onDeviceChanged?.invoke(device)
+                notifyChanged()
+            } else if (state == BluetoothProfile.STATE_DISCONNECTED && device == connectedDevice) {
+                connectedDevice = null
+                onDeviceChanged?.invoke(null)
+                notifyChanged()
+            }
+        }
+
+        override fun onGetReport(device: BluetoothDevice?, type: Byte, id: Byte, size: Int) {
+            try {
+                if (type.toInt() == 1 && id.toInt() == 0) {
+                    hidProxy?.replyReport(device, type, id, ByteArray(8))
+                }
+            } catch (_: Exception) {}
+        }
+
+        override fun onSetReport(device: BluetoothDevice?, type: Byte, id: Byte, data: ByteArray?) {}
+        override fun onInterruptData(device: BluetoothDevice?, reportId: Byte, data: ByteArray?) {}
     }
 
     override fun onCreate() {
@@ -86,101 +147,124 @@ class HidForegroundService : Service() {
         createNotificationChannel()
         registerReceiver(receiver, IntentFilter().apply {
             addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
             addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
         })
-        DebugLogger.i(TAG, "Created")
+        DebugLogger.i(TAG, "Service created")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
-        handler.postDelayed({ initHid() }, 2000L)
+        scheduleInit(1000L)
         return START_STICKY
     }
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
         try { hidProxy?.unregisterApp() } catch (_: Exception) {}
+        try { serverSocket?.close() } catch (_: Exception) {}
         try { unregisterReceiver(receiver) } catch (_: Exception) {}
         super.onDestroy()
     }
 
-    fun reinit() {
-        DebugLogger.i(TAG, "Reinit HID")
-        handler.removeCallbacksAndMessages(null)
-        retryRunnable = null
-        isRegistered = false
-        registerAttempt = 0
-        isBinding = false
-        hidProxy = null
-        connectedDevice = null
-        notifyState()
-        initHid()
+    private fun scheduleInit(delayMs: Long) {
+        if (reinitScheduled) return
+        reinitScheduled = true
+        handler.postDelayed({
+            reinitScheduled = false
+            initCount++
+            initHid()
+        }, delayMs)
     }
 
+    fun manualReinit() {
+        DebugLogger.i(TAG, "Manual reinit requested")
+        isHidBound = false
+        isRegistered = false
+        connectedDevice = null
+        hidProxy = null
+        initCount = 0
+        notifyChanged()
+        scheduleInit(500L)
+    }
+
+    @SuppressLint("MissingPermission")
     private fun initHid() {
         val adapter = btAdapter
         if (adapter == null || !adapter.isEnabled) {
-            scheduleInitRetry()
+            DebugLogger.w(TAG, "BT not ready, retry")
+            scheduleInit(5000L)
             return
         }
-        if (isBinding) {
-            DebugLogger.d(TAG, "Already binding, skip")
-            return
-        }
-        isBinding = true
-        DebugLogger.i(TAG, "getProfileProxy(19)...")
-        try {
-            adapter.getProfileProxy(this, object : BluetoothProfile.ServiceListener {
-                override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-                    isBinding = false
-                    if (proxy is BluetoothHidDevice) {
-                        hidProxy = proxy
-                        DebugLogger.i(TAG, "HID proxy obtained")
-                        registerApp()
-                    } else {
-                        DebugLogger.w(TAG, "Non-HID proxy: ${proxy?.javaClass?.name}")
-                        scheduleInitRetry()
-                    }
-                }
 
-                override fun onServiceDisconnected(profile: Int) {
-                    isBinding = false
-                    hidProxy = null
-                    isRegistered = false
-                    notifyState()
-                    scheduleInitRetry()
-                }
-            }, 19)
-        } catch (e: Exception) {
-            isBinding = false
-            DebugLogger.e(TAG, "getProfileProxy failed", e)
-            scheduleInitRetry()
+        startDiscoveryServer()
+
+        if (!isHidBound) {
+            DebugLogger.i(TAG, "Binding HID profile (init #$initCount)")
+            try {
+                adapter.getProfileProxy(this, object : BluetoothProfile.ServiceListener {
+                    override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
+                        DebugLogger.i(TAG, "HID profile connected: profile=$profile type=${proxy?.javaClass?.simpleName}")
+                        if (proxy is BluetoothHidDevice) {
+                            hidProxy = proxy
+                            isHidBound = true
+                            handler.post { registerHidApp() }
+                        } else {
+                            DebugLogger.w(TAG, "Wrong proxy type: ${proxy?.javaClass?.name}")
+                            isHidBound = false
+                            scheduleInit(5000L)
+                        }
+                    }
+
+                    override fun onServiceDisconnected(profile: Int) {
+                        DebugLogger.w(TAG, "HID profile disconnected")
+                        isHidBound = false
+                        hidProxy = null
+                        isRegistered = false
+                        notifyChanged()
+                        scheduleInit(3000L)
+                    }
+                }, 19)
+            } catch (e: Exception) {
+                DebugLogger.e(TAG, "getProfileProxy error", e)
+                isHidBound = false
+                scheduleInit(5000L)
+            }
+        } else if (!isRegistered && hidProxy != null) {
+            registerHidApp()
         }
     }
 
-    private fun registerApp() {
+    @SuppressLint("MissingPermission")
+    private fun startDiscoveryServer() {
         try {
-            val proxy = hidProxy ?: run {
-                DebugLogger.w(TAG, "No proxy, init first")
-                initHid()
-                return
-            }
+            serverSocket?.close()
+            val name = btAdapter?.name ?: SDP_NAME
+            serverSocket = btAdapter?.listenUsingInsecureRfcommWithServiceRecord(name, HID_UUID)
+            DebugLogger.i(TAG, "RFCOMM server socket listening as '$name'")
+        } catch (e: Exception) {
+            DebugLogger.d(TAG, "RFCOMM server not critical: ${e.message}")
+        }
+    }
+
+    private fun registerHidApp() {
+        try {
+            val proxy = hidProxy ?: run { scheduleInit(2000L); return }
             val adapter = btAdapter
-            if (adapter == null || !adapter.isEnabled) {
-                scheduleInitRetry()
-                return
-            }
+            if (adapter == null || !adapter.isEnabled) { scheduleInit(5000L); return }
 
             if (isRegistered) {
+                DebugLogger.i(TAG, "Already registered, unregistering first")
                 try { proxy.unregisterApp() } catch (_: Exception) {}
-                isRegistered = false
                 Thread.sleep(300)
+                isRegistered = false
             }
 
-            val sdpName = adapter.name?.takeIf { it.isNotBlank() } ?: SDP_RECORD_NAME
+            val btName = adapter.name?.takeIf { it.isNotBlank() } ?: SDP_NAME
             val sdp = BluetoothHidDeviceAppSdpSettings(
-                sdpName, SDP_DESCRIPTION, SDP_PROVIDER,
-                BluetoothHidDevice.SUBCLASS1_COMBO, hidReportDescriptor
+                btName, SDP_DESC, SDP_PROVIDER,
+                BluetoothHidDevice.SUBCLASS1_COMBO, HID_DESCRIPTOR
             )
             val qosIn = BluetoothHidDeviceAppQosSettings(
                 BluetoothHidDeviceAppQosSettings.SERVICE_BEST_EFFORT,
@@ -191,170 +275,116 @@ class HidForegroundService : Service() {
                 800, 9, 0, 1000, 1000
             )
 
-            registerAttempt++
-            DebugLogger.i(TAG, "registerApp attempt=$registerAttempt sdpName=$sdpName")
+            DebugLogger.i(TAG, "registerApp as '$btName' (init #$initCount)")
             val ok = proxy.registerApp(sdp, qosIn, qosOut, mainExecutor, hidCallback)
-            DebugLogger.i(TAG, "registerApp=$ok")
+            DebugLogger.i(TAG, "registerApp result: $ok")
 
             if (ok) {
                 isRegistered = true
-                registerAttempt = 0
-                retryRunnable = null
-                notifyState()
-                DebugLogger.i(TAG, "HID registered! Have host scan Bluetooth to see '${sdpName}'")
+                notifyChanged()
+                DebugLogger.i(TAG, "HID registered! Tell host to scan BT to find '$btName' as keyboard/mouse")
             } else {
-                scheduleRetry()
+                DebugLogger.w(TAG, "registerApp returned false")
+                scheduleInit(3000L)
             }
         } catch (e: Exception) {
             DebugLogger.e(TAG, "registerApp exception", e)
-            scheduleRetry()
+            scheduleInit(5000L)
         }
     }
 
-    private val hidCallback = object : BluetoothHidDevice.Callback() {
-        override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, reg: Boolean) {
-            DebugLogger.i(TAG, "StatusChanged: registered=$reg plugged=${pluggedDevice?.name}")
-            isRegistered = reg
-            if (reg) {
-                registerAttempt = 0
-                retryRunnable = null
-                if (pluggedDevice != null) {
-                    connectedDevice = pluggedDevice
-                    onDeviceChanged?.invoke(pluggedDevice)
-                    DebugLogger.i(TAG, "HOST CONNECTED: ${pluggedDevice.name} (${pluggedDevice.address})")
-                }
-                notifyState()
-            } else if (!reg) {
-                connectedDevice = null
-                onDeviceChanged?.invoke(null)
-                notifyState()
-                scheduleRetry()
-            }
-        }
-
-        override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
-            DebugLogger.i(TAG, "ConnState: state=$state dev=${device?.name}")
-            if (state == BluetoothProfile.STATE_CONNECTED) {
-                connectedDevice = device
-                onDeviceChanged?.invoke(device)
-                notifyState()
-            } else if (state == BluetoothProfile.STATE_DISCONNECTED && device == connectedDevice) {
-                connectedDevice = null
-                onDeviceChanged?.invoke(null)
-                notifyState()
-            }
-        }
-
-        override fun onGetReport(device: BluetoothDevice?, type: Byte, id: Byte, size: Int) {
-            if (type.toInt() == 1) {
-                try {
-                    hidProxy?.replyReport(device, type, id, ByteArray(8))
-                } catch (_: Exception) {}
-            }
-        }
-        override fun onSetReport(device: BluetoothDevice?, type: Byte, id: Byte, data: ByteArray?) {}
-        override fun onInterruptData(device: BluetoothDevice?, reportId: Byte, data: ByteArray?) {}
-    }
-
-    private fun scheduleInitRetry() {
-        retryRunnable?.let { handler.removeCallbacks(it) }
-        retryRunnable = Runnable { initHid() }
-        handler.postDelayed(retryRunnable, 5000L)
-    }
-
-    private fun scheduleRetry() {
-        retryRunnable?.let { handler.removeCallbacks(it) }
-        val delay = when {
-            registerAttempt <= 3 -> 3000L
-            registerAttempt <= 8 -> 10000L
-            else -> 30000L
-        }
-        DebugLogger.i(TAG, "Retry #${registerAttempt + 1} in ${delay}ms")
-        retryRunnable = Runnable { registerApp() }
-        handler.postDelayed(retryRunnable, delay)
-    }
-
-    private fun notifyState() {
+    private fun notifyChanged() {
         onStatusChanged?.invoke(isRegistered, connectedDevice != null, null)
+        updateNotification()
+    }
+
+    private fun updateNotification() {
+        val text = if (connectedDevice != null)
+            "Connected to ${connectedDevice?.name}"
+        else if (isRegistered)
+            "HID active - Ready to connect"
+        else
+            "HID service starting..."
+        try {
+            val nm = getSystemService(NotificationManager::class.java)
+            nm.notify(NOTIFICATION_ID, Notification.Builder(this, CHANNEL_ID)
+                .setContentTitle("BT KB & Mouse Pro")
+                .setContentText(text)
+                .setSmallIcon(android.R.drawable.ic_menu_compass)
+                .setContentIntent(PendingIntent.getActivity(this, 0,
+                    Intent(this, MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP },
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+                .setOngoing(true)
+                .build())
+        } catch (_: Exception) {}
     }
 
     fun sendMouseReport(buttons: Int, dx: Int, dy: Int, scroll: Int = 0) {
+        val hid = hidProxy ?: return
+        val dev = connectedDevice ?: return
         try {
-            val hid = hidProxy ?: return
-            val dev = connectedDevice ?: return
             hid.sendReport(dev, REPORT_ID_MOUSE.toInt(),
                 byteArrayOf(buttons.toByte(), dx.toByte(), dy.toByte(), scroll.toByte()))
-        } catch (e: Exception) {
-            DebugLogger.e(TAG, "Mouse err", e)
-        }
+        } catch (e: Exception) { DebugLogger.e(TAG, "Mouse err", e) }
     }
 
-    fun sendKeyboardReport(modifiers: Byte, keys: ByteArray) {
+    fun sendKeyboardReport(modifiers: Byte, keys: ByteArray = byteArrayOf()) {
+        val hid = hidProxy ?: return
+        val dev = connectedDevice ?: return
         try {
-            val hid = hidProxy ?: return
-            val dev = connectedDevice ?: return
             val rpt = ByteArray(8)
             rpt[0] = modifiers
-            for (i in keys.indices) { if (i < 6) rpt[2 + i] = keys[i] }
+            keys.forEachIndexed { i, k -> if (i < 6) rpt[2 + i] = k }
             hid.sendReport(dev, REPORT_ID_KEYBOARD.toInt(), rpt)
-        } catch (e: Exception) {
-            DebugLogger.e(TAG, "KB err", e)
-        }
+        } catch (e: Exception) { DebugLogger.e(TAG, "KB err", e) }
     }
 
-    fun sendMediaReport(code: Byte) {
-        try {
-            val hid = hidProxy ?: return
-            val dev = connectedDevice ?: return
-            hid.sendReport(dev, REPORT_ID_CONSUMER.toInt(), byteArrayOf(code))
-        } catch (e: Exception) {
-            DebugLogger.e(TAG, "Media err", e)
-        }
+    fun sendConsumerReport(code: Byte) {
+        val hid = hidProxy ?: return
+        val dev = connectedDevice ?: return
+        try { hid.sendReport(dev, REPORT_ID_CONSUMER.toInt(), byteArrayOf(code)) } catch (_: Exception) {}
     }
 
     private fun createNotificationChannel() {
         getSystemService(NotificationManager::class.java).createNotificationChannel(
             NotificationChannel(CHANNEL_ID, "BT HID Service", NotificationManager.IMPORTANCE_LOW).apply {
-                description = "Keeps HID keyboard/mouse active"
+                description = "Bluetooth HID keyboard/mouse service"
             }
         )
     }
 
-    private fun buildNotification(): Notification {
-        val text = if (connectedDevice != null) "Connected to ${connectedDevice?.name}"
-        else if (isRegistered) "HID active - waiting for connection"
-        else "Starting HID service..."
-        return Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("BT KB & Mouse Pro")
-            .setContentText(text)
-            .setSmallIcon(android.R.drawable.ic_menu_compass)
-            .setContentIntent(PendingIntent.getActivity(this, 0,
-                Intent(this, MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP },
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
-            .setOngoing(true)
-            .build()
-    }
+    private fun buildNotification() = Notification.Builder(this, CHANNEL_ID)
+        .setContentTitle("BT KB & Mouse Pro")
+        .setContentText("HID keyboard & mouse active")
+        .setSmallIcon(android.R.drawable.ic_menu_compass)
+        .setContentIntent(PendingIntent.getActivity(this, 0,
+            Intent(this, MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+        .setOngoing(true)
+        .build()
 
-    private val hidReportDescriptor = byteArrayOf(
-        0x05, 0x01, 0x09, 0x06, 0xa1.toByte(), 0x01, 0x85.toByte(), REPORT_ID_KEYBOARD,
-        0x05, 0x07, 0x19, 0xe0.toByte(), 0x29, 0xe7.toByte(),
-        0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95.toByte(), 0x08, 0x81.toByte(), 0x02,
-        0x95.toByte(), 0x01, 0x75, 0x08, 0x81.toByte(), 0x01,
-        0x95.toByte(), 0x06, 0x75, 0x08, 0x15, 0x00, 0x25, 0x65,
-        0x05, 0x07, 0x19, 0x00, 0x29, 0x65, 0x81.toByte(), 0x00, 0xc0.toByte(),
-        0x05, 0x01, 0x09, 0x02, 0xa1.toByte(), 0x01, 0x85.toByte(), REPORT_ID_MOUSE,
-        0x09, 0x01, 0xa1.toByte(), 0x00,
-        0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01,
-        0x95.toByte(), 0x03, 0x75, 0x01, 0x81.toByte(), 0x02,
-        0x95.toByte(), 0x01, 0x75, 0x05, 0x81.toByte(), 0x01,
-        0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x09, 0x38,
-        0x15, 0x81.toByte(), 0x25, 0x7f, 0x75, 0x08, 0x95.toByte(), 0x03, 0x81.toByte(), 0x06,
-        0xc0.toByte(), 0xc0.toByte(),
-        0x05, 0x0c.toByte(), 0x09, 0x01, 0xa1.toByte(), 0x01, 0x85.toByte(), REPORT_ID_CONSUMER,
-        0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95.toByte(), 0x07,
-        0x0a, 0xcd.toByte(), 0x00, 0x0a, 0xe9.toByte(), 0x00,
-        0x0a, 0xea.toByte(), 0x00, 0x0a, 0xe2.toByte(), 0x00,
-        0x0a, 0xb6.toByte(), 0x00, 0x0a, 0xb5.toByte(), 0x00,
-        0x0a, 0xb7.toByte(), 0x00, 0x81.toByte(), 0x02, 0xc0.toByte()
-    )
+    companion object {
+        val HID_DESCRIPTOR = byteArrayOf(
+            0x05, 0x01, 0x09, 0x06, 0xa1.toByte(), 0x01, 0x85.toByte(), REPORT_ID_KEYBOARD,
+            0x05, 0x07, 0x19, 0xe0.toByte(), 0x29, 0xe7.toByte(),
+            0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95.toByte(), 0x08, 0x81.toByte(), 0x02,
+            0x95.toByte(), 0x01, 0x75, 0x08, 0x81.toByte(), 0x01,
+            0x95.toByte(), 0x06, 0x75, 0x08, 0x15, 0x00, 0x25, 0x65,
+            0x05, 0x07, 0x19, 0x00, 0x29, 0x65, 0x81.toByte(), 0x00, 0xc0.toByte(),
+            0x05, 0x01, 0x09, 0x02, 0xa1.toByte(), 0x01, 0x85.toByte(), REPORT_ID_MOUSE,
+            0x09, 0x01, 0xa1.toByte(), 0x00,
+            0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01,
+            0x95.toByte(), 0x03, 0x75, 0x01, 0x81.toByte(), 0x02,
+            0x95.toByte(), 0x01, 0x75, 0x05, 0x81.toByte(), 0x01,
+            0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x09, 0x38,
+            0x15, 0x81.toByte(), 0x25, 0x7f, 0x75, 0x08, 0x95.toByte(), 0x03, 0x81.toByte(), 0x06,
+            0xc0.toByte(), 0xc0.toByte(),
+            0x05, 0x0c.toByte(), 0x09, 0x01, 0xa1.toByte(), 0x01, 0x85.toByte(), REPORT_ID_CONSUMER,
+            0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95.toByte(), 0x07,
+            0x0a, 0xcd.toByte(), 0x00, 0x0a, 0xe9.toByte(), 0x00,
+            0x0a, 0xea.toByte(), 0x00, 0x0a, 0xe2.toByte(), 0x00,
+            0x0a, 0xb6.toByte(), 0x00, 0x0a, 0xb5.toByte(), 0x00,
+            0x0a, 0xb7.toByte(), 0x00, 0x81.toByte(), 0x02, 0xc0.toByte()
+        )
+    }
 }
