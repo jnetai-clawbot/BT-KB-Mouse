@@ -1,5 +1,6 @@
 package com.jnetaol.btkbmouse.bluetooth
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -57,8 +58,9 @@ class HidForegroundService : Service() {
         fun getService(): HidForegroundService = this@HidForegroundService
     }
 
+    override fun onBind(intent: Intent?): IBinder = binder
+
     private val btStateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: android.content.Context?, intent: Intent?) {
             when (intent?.action) {
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
@@ -162,6 +164,7 @@ class HidForegroundService : Service() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun startDiscoveryMode() {
         try {
             discoveryKeepAlive = true
@@ -173,7 +176,15 @@ class HidForegroundService : Service() {
                             val currentMode = adapter.scanMode
                             if (currentMode != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
                                 DebugLogger.i(TAG, "BK-SVC Setting discoverable mode (current=$currentMode)")
-                                adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, DISCOVERABLE_DURATION)
+                                @Suppress("DEPRECATION")
+                        adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+                        if (DISCOVERABLE_DURATION > 0) {
+                            @Suppress("DEPRECATION")
+                            adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, DISCOVERABLE_DURATION)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            adapter.setScanMode(BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+                        }
                             }
                         }
                         Thread.sleep(300000)
@@ -289,7 +300,7 @@ class HidForegroundService : Service() {
 
         override fun onGetReport(device: BluetoothDevice?, type: Byte, id: Byte, size: Int) {
             DebugLogger.d(TAG, "BK-SVC onGetReport: type=$type, id=$id")
-            if (type == 1) {
+            if (type.toInt() == 1) {
                 handler.post {
                     try {
                         val empty = byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
